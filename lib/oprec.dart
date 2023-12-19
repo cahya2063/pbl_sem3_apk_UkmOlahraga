@@ -75,47 +75,9 @@ class _OprecState extends State<Oprec> {
     }
   }
 
-  // oprecformState newoprec = new oprecformState();
+  
   oprecform2 newoprec = oprecform2();
-  // final ImagePicker _picker = ImagePicker();
-  // final _namaController = TextEditingController();
-  // final _nimController = TextEditingController();
-  // final _prodiController = TextEditingController();
-  // final _emailController = TextEditingController();
-  // final _no_telpController = TextEditingController();
-  // final _divisi_1Controller = TextEditingController();
-  // final _divisi_2Controller = TextEditingController();
-
-  //   void daftar() {
-  //   final enterednama = _namaController.text;
-  //   final enterednim = _nimController.text;
-  //   final enteredprodi = _prodiController.text;
-  //   final enteredemail = _emailController.text;
-  //   final enterednoTelp = _no_telpController.text;
-  //   final entereddivisi1 = _divisi_1Controller.text;
-  //   final entereddivisi2 = _divisi_2Controller.text;
-
-  //   if (enterednama.isEmpty ||
-  //       enterednim.isEmpty ||
-  //       enteredprodi.isEmpty ||
-  //       enteredemail.isEmpty ||
-  //       enterednoTelp.isEmpty ||
-  //       entereddivisi1.isEmpty ||
-  //       entereddivisi2.isEmpty) {
-  //         return;
-  //       }
-  //   final oprecmodel newoprec = oprecmodel(
-  //     nama: enterednama,
-  //     nim: enterednim,
-  //     prodi: enteredprodi,
-  //     email: enteredemail,
-  //     no_telp: enterednoTelp,
-  //     divisi_1: entereddivisi1,
-  //     divisi_2: entereddivisi2,
-  //   );
-  //   widget.addOprec(newoprec);
-  //   Navigator.pop(context);
-  // }
+  
 
   List<String> jurusan = ['sipil', 'TRM', 'JBI', 'AGB', 'MBP'];
   String selectjr = 'sipil';
