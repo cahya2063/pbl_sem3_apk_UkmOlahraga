@@ -124,13 +124,13 @@ class login extends StatelessWidget {
                                               BorderRadius.circular(10)),
                                     ),
                                     onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: ((context) =>
-                                              const Navbarguest()),
-                                        ),
-                                      );
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: ((context) =>
+                                      //         const Navbarguest()),
+                                      //   ),
+                                      // );
                                     },
                                     child: const Text(
                                       'masuk tanpa daftar',
