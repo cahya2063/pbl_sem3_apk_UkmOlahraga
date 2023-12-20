@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pblukm/loginform.dart';
 import 'package:pblukm/navbar.dart';
+import 'package:pblukm/registrer.dart';
 
 // ignore: camel_case_types
 class login extends StatelessWidget {
@@ -103,7 +104,7 @@ class login extends StatelessWidget {
                           ],
                         ),
                       ),
-                      //tombol SSO Poliwangi
+                      //tombol SSO login
                       Padding(
                         padding: const EdgeInsets.only(top: 0),
                         child: Row(
@@ -128,12 +129,12 @@ class login extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder: ((context) =>
-                                              const Navbarguest()),
+                                              const Register()),
                                         ),
                                       );
                                     },
                                     child: const Text(
-                                      'masuk tanpa daftar',
+                                      'Daftar yuk!!',
                                       style: TextStyle(
                                           color: Colors.black, fontSize: 22),
                                     ),
@@ -145,7 +146,7 @@ class login extends StatelessWidget {
                           ],
                         ),
                       ),
-                      //tombol guest
+                      //tombol register
                       const Padding(
                         padding: EdgeInsets.only(top: 20, bottom: 20),
                         child: Text(

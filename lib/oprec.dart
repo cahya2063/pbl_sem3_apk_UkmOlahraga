@@ -4,10 +4,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pblukm/form/oprecform.dart';
 import 'package:pblukm/form/oprecform2.dart';
 import 'package:pblukm/models/oprec.dart';
 import 'package:http/http.dart' as http;
+import 'package:pblukm/models/divisimodel.dart';
 
 class Oprec extends StatefulWidget {
   // final Function(oprecmodel) addOprec;
@@ -21,6 +21,27 @@ class Oprec extends StatefulWidget {
 class _OprecState extends State<Oprec> {
   late List<oprecmodel> data = [];
 
+  late List<modelDiv> divisi = []; //list untuk tampung data API tabel divisi
+
+  Future<List<modelDiv>> fetchDatadivisi() async {
+    final response =
+        await http.get(Uri.parse('http://10.0.2.2:8000/api/divisi/view'));
+    if (response.statusCode == 200) {
+      List<dynamic> responseBody = json.decode(response.body);
+
+      List<dynamic> divisiList = responseBody[0];
+
+      // Mengonversi setiap item dalam daftar menjadi objek modelDiv
+      List<modelDiv> divisis =
+          divisiList.map((item) => modelDiv.fromJson(item)).toList();
+
+      // Mengembalikan daftar modelDiv setelah konversi
+      return divisis;
+    } else {
+      throw "Failed to load data: ${response.statusCode}";
+    }
+  }
+
   Future<List<oprecmodel>> fetchData() async {
     final response =
         await http.get(Uri.parse('http://10.0.2.2:8000/api/anggota/view'));
@@ -31,11 +52,9 @@ class _OprecState extends State<Oprec> {
       List<dynamic> responseBody = json.decode(response.body);
       List<dynamic> divisiList = responseBody.elementAt(0);
 
-      // Mengonversi setiap item dalam daftar menjadi objek modelDiv
       List<oprecmodel> oprec =
           divisiList.map((item) => oprecmodel.fromjson(item)).toList();
 
-      // Mengembalikan daftar modelDiv setelah konversi
       return oprec;
     } else {
       throw "Failed to load data: ${response.statusCode}";
@@ -45,11 +64,14 @@ class _OprecState extends State<Oprec> {
   @override
   void initState() {
     super.initState();
-    fetchData().then((value) {
-      setState(() {
-        data = value;
+    
+      
+      fetchDatadivisi().then((value) {
+        setState(() {
+          divisi = value;
+        });
       });
-    });
+    
 
     newoprec.prodiController.text = selectjr;
     newoprec.divisi_1Controller.text = selctdiv1;
@@ -75,9 +97,7 @@ class _OprecState extends State<Oprec> {
     }
   }
 
-  
   oprecform2 newoprec = oprecform2();
-  
 
   List<String> jurusan = ['sipil', 'TRM', 'JBI', 'AGB', 'MBP'];
   String selectjr = 'sipil';
@@ -483,15 +503,16 @@ class _OprecState extends State<Oprec> {
                                 labelStyle:
                                     const TextStyle(fontFamily: 'Poppins'),
                               ),
-                              items: div1.map<DropdownMenuItem<String>>(
-                                  (String value) {
+                              items: divisi.map<DropdownMenuItem<String>>(
+                                  (modelDiv value) {
                                 return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: const TextStyle(
-                                          fontFamily: 'Poppins'),
-                                    ));
+                                  value: value.nama,
+                                  child: Text(
+                                    value.nama,
+                                    style:
+                                        const TextStyle(fontFamily: 'Poppins'),
+                                  ),
+                                );
                               }).toList(),
                             ),
                           ),
@@ -501,10 +522,12 @@ class _OprecState extends State<Oprec> {
                             onChanged: (newvalue) {
                               setState(
                                 () {
-                                  selctdiv2 = newvalue!;
-                                  if (selctdiv2 == div2[0]) {
-                                    return null;
+                                  if (newvalue == 'none') {
+                                    selctdiv2 = '';
                                   }
+                                  selctdiv2 = newvalue!;
+
+                                  newoprec.divisi_2Controller.text = selctdiv2;
                                 },
                               );
                             },
@@ -524,16 +547,28 @@ class _OprecState extends State<Oprec> {
                               labelStyle:
                                   const TextStyle(fontFamily: 'Poppins'),
                             ),
-                            items: div2
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                  value: value,
+                            items: [
+                              // Menambahkan opsi "none" secara manual
+                              DropdownMenuItem<String>(
+                                value: 'none',
+                                child: const Text(
+                                  'None',
+                                  style: TextStyle(fontFamily: 'Poppins'),
+                                ),
+                              ),
+                              // Menggunakan data dari API untuk mengisi pilihan pada dropdown
+                              ...divisi.map<DropdownMenuItem<String>>(
+                                  (modelDiv value) {
+                                return DropdownMenuItem<String>(
+                                  value: value.nama,
                                   child: Text(
-                                    value,
+                                    value.nama,
                                     style:
                                         const TextStyle(fontFamily: 'Poppins'),
-                                  ));
-                            }).toList(),
+                                  ),
+                                );
+                              }).toList(),
+                            ],
                           ),
                           //dropdown div 2
 
@@ -570,6 +605,7 @@ class _OprecState extends State<Oprec> {
                                       //     no_telp: "123",
                                       //     divisi_1: "badminton");
                                       // _addPerson(dummy);
+                                      Navigator.pop(context);
                                     },
                                     child: const Text(
                                       'Submit',

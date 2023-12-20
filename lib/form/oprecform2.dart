@@ -18,7 +18,7 @@ class oprecform2 {
       email: this.emailController.text,
       no_telp: this.no_telpController.text,
       divisi_1: this.divisi_1Controller.text,
-      // divisi_2: this.divisi_2Controller.text,
+      divisi_2: this.divisi_2Controller.text,
     );
 
     //  nama: "coba",

@@ -39,7 +39,7 @@ class oprecmodel {
         no_telp: json['no_telp'] as String,
         cv: json['cv'],
         divisi_1: json['divisi_1'] as String,
-        divisi_2: json['divisi_2'],
+        divisi_2: json['divisi_2'] ,
         jabatan: json['jabatan'] as String,
         status: json['status'] as String);
   }

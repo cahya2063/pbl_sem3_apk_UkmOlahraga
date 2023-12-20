@@ -38,9 +38,12 @@ class _formloginState extends State<formlogin> {
         var accessToken = data['access_token']['plainTextToken'];
         print('Login berhasil, access token: $accessToken');
         // Navigasi ke halaman selanjutnya setelah berhasil login
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>navbar()));
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => navbar()));
       } else {
         // Jika login gagal, tampilkan pesan kesalahan
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
