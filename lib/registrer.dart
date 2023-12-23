@@ -21,7 +21,7 @@ class _RegisterState extends State<Register> {
 
    Future<List<Registermodel>> fetchData() async {
     final response =
-        await http.get(Uri.parse('http://10.0.2.2:8000/api/anggota/view'));
+        await http.get(Uri.parse('http://10.0.2.2:8000/api/user/view'));
     if (response.statusCode == 200) {
       // Map<String, dynamic> responseBody = json.decode(response.body);
       // List<dynamic> divisiList = responseBody['data'];
