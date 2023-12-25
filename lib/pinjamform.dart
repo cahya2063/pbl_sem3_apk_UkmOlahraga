@@ -10,7 +10,6 @@ class Pinjamform extends StatefulWidget {
 }
 
 class _PinjamformState extends State<Pinjamform> {
-  @override
   TextEditingController _dateController = TextEditingController();
   List<String> jurusan = ['sipil', 'TRM', 'JBI', 'AGB', 'MBP'];
   String selectjr = 'sipil';
@@ -26,6 +25,8 @@ class _PinjamformState extends State<Pinjamform> {
     'shuttle cock'
   ];
   String selectalat = 'bola basket';
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -87,7 +88,7 @@ class _PinjamformState extends State<Pinjamform> {
                                   height: 50,
                                   child: TextField(
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                           vertical: 5, horizontal: 10),
                                       filled: false,
                                       hintText: 'masukkan Namamu!',
@@ -133,7 +134,7 @@ class _PinjamformState extends State<Pinjamform> {
                                       FilteringTextInputFormatter.digitsOnly
                                     ],
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                           vertical: 5, horizontal: 10),
                                       filled: false,
                                       hintText: 'masukkan Nimmu!',
@@ -280,7 +281,7 @@ class _PinjamformState extends State<Pinjamform> {
                                       FilteringTextInputFormatter.digitsOnly
                                     ],
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                           vertical: 5, horizontal: 10),
                                       filled: false,
                                       hintText: 'pinjam berapa?',
@@ -324,7 +325,7 @@ class _PinjamformState extends State<Pinjamform> {
                                   child: TextField(
                                     maxLines: 8,
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                           vertical: 15, horizontal: 10),
                                       filled: false,
                                       hintText: 'bagaimana kondisi alatnya?',

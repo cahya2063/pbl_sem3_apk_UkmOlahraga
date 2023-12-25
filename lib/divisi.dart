@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pblukm/fiturdiv.dart';
+//import 'package:pblukm/fiturdiv.dart';
 import 'package:pblukm/models/divisimodel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -110,7 +110,7 @@ class _DivisiState extends State<Divisi> {
                                       Image.asset('img/bgtombol.png'),
                                       Text(
                                         divisi[index].nama,
-                                        style: TextStyle(fontSize: 30),
+                                        style: const TextStyle(fontSize: 30),
                                       ),
                                     ],
                                   ),

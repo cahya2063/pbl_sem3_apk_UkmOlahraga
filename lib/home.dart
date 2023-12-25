@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/beritamodel.dart';
 import 'package:pblukm/oprec.dart';
 import 'package:pblukm/pinjamform.dart';
-import 'package:pblukm/stok.dart';
+//import 'package:pblukm/stok.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,10 +18,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  @override
   void initState() {
     super.initState();
     _getdataFormAPI();
   }
+
 
   List<dynamic> articles1 = [];
   bool hasilFetchOpenRecr = true;
@@ -42,18 +45,19 @@ class _HomeState extends State<Home> {
                     width: 65,
                   ),
                   //gambar profil
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
                     child: Column(
                       children: [
-                        Text(
-                          'Welcome',
+                        const Text(
+                          //'${formloginState.token}',
+                          'welcome',
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                         //teks welcome
                         Text(
-                          'Devita',
-                          style: TextStyle(fontSize: 15, color: Colors.black),
+                          '${formloginState.nama}',
+                          style: const TextStyle(fontSize: 15, color: Colors.black),
                         ),
                       ],
                     ),
@@ -113,7 +117,7 @@ class _HomeState extends State<Home> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Oprec()));
+                                        builder: (context) => const Oprec()));
                               },
                               style: ElevatedButton.styleFrom(
                                   side: const BorderSide(color: Colors.blue),
@@ -197,14 +201,14 @@ class _HomeState extends State<Home> {
                           itemCount: articles1.length,
                           itemBuilder: (BuildContext context, index) {
                             return ListTile(
-                              contentPadding: EdgeInsets.all(10),
+                              contentPadding: const EdgeInsets.all(10),
                               title: Text(articles1[index]
                                   .title), //tampilkan title API dari masing masing data yang ada di dalam articles[index]
                               subtitle: Text(articles1[index].sourceId +
                                   '     ' +
                                   articles1[index]
                                       .author), //tampilkan tanggal published API dari masing masing data yang ada di dalam articles[index]
-                              leading: CircleAvatar(
+                              leading: const CircleAvatar(
                                 child: Icon(Icons.public),
                               ),
 
@@ -215,6 +219,9 @@ class _HomeState extends State<Home> {
                             );
                           }),
                     ),
+                    const SizedBox(
+                      height: 20,
+                    )
                   ],
                 ),
               ),
@@ -228,10 +235,12 @@ class _HomeState extends State<Home> {
 
   static Future<List<Api>> connectToApi() async {
     // URL API yang akan diakses untuk mendapatkan data
+    // ignore: non_constant_identifier_names
     var ApiUrl =
         'https://newsapi.org/v2/top-headlines?country=id&category=sports&apiKey=55573e14a5df46adbad7353c4dfea188';
 
     // Mengirim permintaan GET ke API dan menunggu respons
+    // ignore: non_constant_identifier_names
     var ApiResult = await http.get(Uri.parse(ApiUrl));
 
     // Mendekode data JSON dari API dan mengambil daftar artikel
@@ -253,9 +262,9 @@ class _HomeState extends State<Home> {
 
   _launchURL(String url) async {
     //fungsi untuk membuka url
-    if (await canLaunch(url)) {
+    if (await canLaunchUrl(Uri.parse(url))) {
       //jika url valid maka akan berpindah ke browser
-      await launch(url);
+      await launchUrl(Uri.parse(url));
     } else {
       throw 'tidak bisa membuka url'; // jika url tidak valid akan ada peringatan
     }

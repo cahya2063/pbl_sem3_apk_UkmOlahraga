@@ -101,7 +101,7 @@ class _OprecState extends State<Oprec> {
                                     child: TextField(
                                       keyboardType: TextInputType.emailAddress,
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: 'masukkan Emailmu!',
@@ -144,7 +144,7 @@ class _OprecState extends State<Oprec> {
                                     height: 50,
                                     child: TextField(
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: 'masukkan Namamu!',
@@ -191,7 +191,7 @@ class _OprecState extends State<Oprec> {
                                         FilteringTextInputFormatter.digitsOnly
                                       ],
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: 'masukkan Nimmu!',
@@ -276,7 +276,7 @@ class _OprecState extends State<Oprec> {
                                         FilteringTextInputFormatter.digitsOnly
                                       ],
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: 'masukkan NoHp!',

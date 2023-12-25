@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/oprec.dart';
 
 class oprecform2 {
@@ -10,7 +11,12 @@ class oprecform2 {
   final divisi_1Controller = TextEditingController();
   final divisi_2Controller = TextEditingController();
 
+
   oprecmodel convertToModel() {
+    emailController.text = formloginState.email;
+    nimController.text = formloginState.nim;
+    prodiController.text = formloginState.prodi;
+    namaController.text = formloginState.nama;
     oprecmodel newoprec = oprecmodel(
       nama: this.namaController.text,
       nim: this.nimController.text,

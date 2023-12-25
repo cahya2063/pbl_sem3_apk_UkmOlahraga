@@ -389,9 +389,9 @@ class _EditProfState extends State<EditProf> {
                                                                     .circular(
                                                                         10)),
                                                     backgroundColor:
-                                                        Color(0xff4741A6)),
+                                                        const Color(0xff4741A6)),
                                                 child:
-                                                    Text('perbarui profile')),
+                                                    const Text('perbarui profile')),
                                             ElevatedButton(
                                                 onPressed: () {
                                                   Navigator.pop(context);
@@ -404,8 +404,8 @@ class _EditProfState extends State<EditProf> {
                                                                     .circular(
                                                                         10)),
                                                     backgroundColor:
-                                                        Color(0xff7A7A7A)),
-                                                child: Text('batal')),
+                                                        const Color(0xff7A7A7A)),
+                                                child: const Text('batal')),
                                           ],
                                         )
                                       ],

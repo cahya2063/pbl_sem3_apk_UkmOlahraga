@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/fiturdiv.dart';
+//import 'package:pblukm/fiturdiv.dart';
 import 'package:pblukm/pinjamform.dart';
 
 class Stok extends StatefulWidget {

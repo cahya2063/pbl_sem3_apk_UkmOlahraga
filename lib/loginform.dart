@@ -1,8 +1,10 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/home.dart';
+//import 'package:pblukm/home.dart';
 import 'package:pblukm/navbar.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,15 +13,28 @@ class formlogin extends StatefulWidget {
   const formlogin({super.key});
 
   @override
-  State<formlogin> createState() => _formloginState();
+  State<formlogin> createState() => formloginState();
 }
 
 // ignore: camel_case_types
-class _formloginState extends State<formlogin> {
+class formloginState extends State<formlogin> {
   final textEmail = TextEditingController();
   final textPass = TextEditingController();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Future<void> loginUser() async {
+  
+  static String? token;
+  static var nama;
+  static var email;
+  static var nim;
+  static var prodi;
+ Future<void> loginUser() async {
+    bool isValid = formKey.currentState!.validate();
+    if (!isValid) {
+      // Tampilkan pesan jika form tidak valid
+
+      return;
+    }
     // Ganti URL dengan URL endpoint login Anda
     var url = Uri.parse('http://10.0.2.2:8000/api/login');
     var response = await http.post(
@@ -35,12 +50,22 @@ class _formloginState extends State<formlogin> {
 
       if (data['status'] == true && data['message'] == 'Login Berhasil') {
         // Jika login berhasil, Anda dapat melakukan sesuatu di sini
-        var accessToken = data['access_token']['plainTextToken'];
-        print('Login berhasil, access token: $accessToken');
+        var token1 = data['access_token']['plainTextToken'];
+        var nama1 = data['data']['name'];
+        var nim1 = data['data']['nim'];
+        var email1 = data['data']['email'];
+        var prodi1 = data['data']['prodi'];
+        // ignore: avoid_print
+        print('Login berhasil, access token: $token1');
         // Navigasi ke halaman selanjutnya setelah berhasil login
         // ignore: use_build_context_synchronously
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => navbar()));
+            context, MaterialPageRoute(builder: (context) => const navbar()));
+        nama = nama1;
+        nim = nim1;
+        email = email1;
+        prodi = prodi1;
+        token = token1;
       } else {
         // Jika login gagal, tampilkan pesan kesalahan
         // ignore: use_build_context_synchronously
@@ -48,12 +73,12 @@ class _formloginState extends State<formlogin> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Login Gagal'),
-              content: Text('Email atau password salah.'),
+              title: const Text('Login Gagal'),
+              content: const Text('Email atau password salah.'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             );
@@ -62,6 +87,7 @@ class _formloginState extends State<formlogin> {
       }
     } else {
       // Jika terjadi kesalahan pada respons dari server
+      // ignore: avoid_print
       print('Error: ${response.reasonPhrase}');
     }
   }
@@ -74,7 +100,7 @@ class _formloginState extends State<formlogin> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: Color(0xFFDBEAFF),
+        backgroundColor: const Color(0xFFDBEAFF),
         body: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,121 +135,138 @@ class _formloginState extends State<formlogin> {
                   ),
                   //white container
                   child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Text(
-                            'Welcome Back!',
-                            style: TextStyle(fontSize: 28),
-                          ),
-                        ),
-                        // teks welcome back
-                        const Padding(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Text(
-                            'Continue to your account',
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                        ),
-                        //teks continue to your account
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              right: 30, left: 30, bottom: 30, top: 30),
-                          child: TextField(
-                            controller: textEmail,
-                            decoration: InputDecoration(
-                              filled: false,
-                              //fillColor: Color.fromARGB(104, 31, 65, 187),
-                              hintText: 'masukkan Emailmu',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide:
-                                    const BorderSide(color: Colors.black),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: Text(
+                              'Welcome Back!',
+                              style: TextStyle(fontSize: 28),
                             ),
                           ),
-                        ),
-                        //bagian input username
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              right: 30, left: 30, top: 0, bottom: 30),
-                          child: TextField(
-                            controller: textPass,
-                            obscureText: obscuretext,
-                            decoration: InputDecoration(
-                              suffixIcon: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    obscuretext = !obscuretext;
-                                  });
-                                },
-                                child: Icon(obscuretext
-                                    ? Iconsax.eye
-                                    : Iconsax.eye_slash),
-                              ),
-                              hintText: 'Password SSO',
-                              border: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
+                          // teks welcome back
+                          const Padding(
+                            padding: EdgeInsets.only(top: 7),
+                            child: Text(
+                              'Continue to your account',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.grey),
                             ),
                           ),
-                        ),
-                        //bagian input password
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(right: 50, left: 50),
-                                child: SizedBox(
-                                  height: 60,
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        print(textEmail);
-                                        print(textPass);
-                                        // ketika diklik, nanti response dari api
-                                        // response nya berupa token / id user.
-                                        // atau berupa objek user
-                                        // objek tersebut bisa di simpan di shared preferense
-
-                                        //response status menunggu, kirim ke halaman tunggu
-                                        // klo diterima kasih ke home
-
-                                        loginUser();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          shadowColor: const Color.fromARGB(
-                                              255, 13, 41, 183),
-                                          elevation: 10,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 13, 41, 183)),
-                                      child: const Text(
-                                        'Sign In',
-                                        style: TextStyle(fontSize: 22),
-                                      )),
+                          //teks continue to your account
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                right: 30, left: 30, bottom: 30, top: 30),
+                            child: TextFormField(
+                              controller: textEmail,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Mana emailmu?';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                filled: false,
+                                //fillColor: Color.fromARGB(104, 31, 65, 187),
+                                hintText: 'masukkan Emailmu',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderSide:
+                                      const BorderSide(color: Colors.black),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      const BorderSide(color: Colors.black),
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                        //tombol Sign In
-                      ],
+                          ),
+                          //bagian input username
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                right: 30, left: 30, top: 0, bottom: 30),
+                            child: TextFormField(
+                              controller: textPass,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Mana passwordmu?';
+                                }
+                                return null;
+                              },
+                              obscureText: obscuretext,
+                              decoration: InputDecoration(
+                                suffixIcon: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      obscuretext = !obscuretext;
+                                    });
+                                  },
+                                  child: Icon(obscuretext
+                                      ? Iconsax.eye
+                                      : Iconsax.eye_slash),
+                                ),
+                                hintText: 'Password SSO',
+                                border: OutlineInputBorder(
+                                  borderSide:
+                                      const BorderSide(color: Colors.black),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      const BorderSide(color: Colors.black),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                          //bagian input password
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 50, left: 50),
+                                  child: SizedBox(
+                                    height: 60,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          print(textEmail);
+                                          print(textPass);
+                                          // ketika diklik, nanti response dari api
+                                          // response nya berupa token / id user.
+                                          // atau berupa objek user
+                                          // objek tersebut bisa di simpan di shared preferense
+
+                                          //response status menunggu, kirim ke halaman tunggu
+                                          // klo diterima kasih ke home
+
+                                          loginUser();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            shadowColor: const Color.fromARGB(
+                                                255, 13, 41, 183),
+                                            elevation: 10,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 13, 41, 183)),
+                                        child: const Text(
+                                          'Sign In',
+                                          style: TextStyle(fontSize: 22),
+                                        )),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          //tombol Sign In
+                        ],
+                      ),
                     ),
                   ),
                 ),

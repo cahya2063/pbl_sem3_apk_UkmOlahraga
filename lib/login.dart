@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pblukm/loginform.dart';
-import 'package:pblukm/navbar.dart';
+//import 'package:pblukm/navbar.dart';
 import 'package:pblukm/registrer.dart';
 
 // ignore: camel_case_types
@@ -10,7 +10,7 @@ class login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFDBEAFF),
+      backgroundColor: const Color(0xFFDBEAFF),
       body: Center(
         child: Column(
           children: [

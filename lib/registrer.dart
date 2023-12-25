@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/form/oprecform2.dart';
+//import 'package:pblukm/form/oprecform2.dart';
 import 'package:pblukm/models/Register.dart';
 import 'package:pblukm/form/registerform.dart';
 import 'package:http/http.dart' as http;
@@ -65,6 +65,7 @@ class _RegisterState extends State<Register> {
   String selectjr = 'sipil';
   @override
   Widget build(BuildContext context) {
+    newreg.textProdi.text = selectjr;
     return Scaffold(
       backgroundColor: Color(0xFFDBEAFF),
       body: Center(
@@ -285,11 +286,11 @@ class _RegisterState extends State<Register> {
                                   height: 60,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      // print(newreg.textEmail);
-                                      // print(newreg.textName);
-                                      // print(newreg.textNim);
-                                      // print(newreg.textPass);
-                                      // print(newreg.textProdi);
+                                      print(newreg.textEmail);
+                                      print(newreg.textName);
+                                      print(newreg.textNim);
+                                      print(newreg.textPass);
+                                      print(newreg.textProdi);
 
                                       Registermodel dataBaru = newreg.convertToModel();
                                       regisApi(dataBaru);

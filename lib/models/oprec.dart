@@ -7,7 +7,7 @@ class oprecmodel {
   String nama;
   String nim;
   String prodi;
-  String email;
+  String? email;
   String no_telp;
   String? cv; // boleh null
   String divisi_1;

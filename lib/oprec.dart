@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:iconsax/iconsax.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pblukm/form/oprecform2.dart';
+import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/oprec.dart';
 import 'package:http/http.dart' as http;
 import 'package:pblukm/models/divisimodel.dart';
@@ -20,7 +23,6 @@ class Oprec extends StatefulWidget {
 
 class _OprecState extends State<Oprec> {
   late List<oprecmodel> data = [];
-
   late List<modelDiv> divisi = []; //list untuk tampung data API tabel divisi
 
   Future<List<modelDiv>> fetchDatadivisi() async {
@@ -64,16 +66,13 @@ class _OprecState extends State<Oprec> {
   @override
   void initState() {
     super.initState();
-    
-      
-      fetchDatadivisi().then((value) {
-        setState(() {
-          divisi = value;
-        });
-      });
-    
 
-    newoprec.prodiController.text = selectjr;
+    fetchDatadivisi().then((value) {
+      setState(() {
+        divisi = value;
+      });
+    });
+
     newoprec.divisi_1Controller.text = selctdiv1;
   }
 
@@ -85,22 +84,21 @@ class _OprecState extends State<Oprec> {
       },
       body: jsonEncode(person.tojson()),
     );
-    if (response.statusCode == 200) {
-      fetchData().then((value) {
-        setState(() {
-          data = value;
+      if (response.statusCode == 200) {
+        fetchData().then((value) {
+          setState(() {
+            data = value;
+          });
         });
-      });
-    } else {
-      print(response.body);
-      throw "Failed to add data";
-    }
+      } else {
+        print(response.body);
+        throw "Failed to add data ${response.statusCode}";
+      }
+    
   }
 
   oprecform2 newoprec = oprecform2();
-
-  List<String> jurusan = ['sipil', 'TRM', 'JBI', 'AGB', 'MBP'];
-  String selectjr = 'sipil';
+  //formloginState access = formloginState();
 
   List<String> div1 = ['basket', 'futsal', 'badminthon', 'catur', 'taekwondo'];
   String selctdiv1 = 'basket';
@@ -185,14 +183,15 @@ class _OprecState extends State<Oprec> {
                                   child: SizedBox(
                                     height: 50,
                                     child: TextField(
+                                      readOnly: true,
                                       controller: newoprec.emailController,
                                       // onSubmitted: (_) => newoprec.daftar(),
                                       keyboardType: TextInputType.emailAddress,
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: 'masukkan Emailmu!',
+                                        hintText: '${formloginState.email}',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -231,13 +230,14 @@ class _OprecState extends State<Oprec> {
                                   child: SizedBox(
                                     height: 50,
                                     child: TextField(
+                                      readOnly: true,
                                       controller: newoprec.namaController,
                                       // onSubmitted: (_) => newoprec.daftar(),
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: 'masukkan Namamu!',
+                                        hintText: '${formloginState.nama}',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -276,6 +276,7 @@ class _OprecState extends State<Oprec> {
                                   child: SizedBox(
                                     height: 50,
                                     child: TextField(
+                                      readOnly: true,
                                       controller: newoprec.nimController,
                                       // onSubmitted: (_) => newoprec.daftar(),
                                       keyboardType: TextInputType.number,
@@ -283,10 +284,10 @@ class _OprecState extends State<Oprec> {
                                         FilteringTextInputFormatter.digitsOnly
                                       ],
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: 'masukkan Nimmu!',
+                                        hintText: '${formloginState.nim}',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -312,45 +313,56 @@ class _OprecState extends State<Oprec> {
                             ),
                           ),
                           //input NIM
+                          const Text(
+                            'Jurusan',
+                            style: TextStyle(
+                                fontFamily: 'PoppinsBold', fontSize: 15),
+                          ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: DropdownButtonFormField<String>(
-                              value: selectjr,
-                              onChanged: (newvalue) {
-                                setState(() {
-                                  selectjr = newvalue!;
-                                  newoprec.prodiController.text = selectjr;
-                                });
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Jurusanmu!',
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: const BorderSide(
-                                      width: 2.0,
-                                      color: Colors.blue,
-                                    )),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: const BorderSide(
-                                      color: Colors.blue,
-                                    )),
-                                labelStyle:
-                                    const TextStyle(fontFamily: 'Poppins'),
-                              ),
-                              items: jurusan.map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: const TextStyle(
-                                          fontFamily: 'Poppins'),
-                                    ));
-                              }).toList(),
+                            padding: const EdgeInsets.only(bottom: 30),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 50,
+                                    child: TextField(
+                                      readOnly: true,
+                                      controller: newoprec.prodiController,
+                                      // onSubmitted: (_) => newoprec.daftar(),
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      decoration: InputDecoration(
+                                        contentPadding: const EdgeInsets.symmetric(
+                                            vertical: 5, horizontal: 10),
+                                        filled: false,
+                                        hintText: '${formloginState.prodi}',
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            borderSide: const BorderSide(
+                                              color: Colors.blue,
+                                              width: 2.0,
+                                            )),
+                                        hintStyle: const TextStyle(
+                                            fontFamily: 'Poppins'),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          borderSide: const BorderSide(
+                                            color: Colors.blue,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          //dropdown jurusan
+                          //input jurusan
                           const Text(
                             'No Hp',
                             style: TextStyle(
@@ -371,7 +383,7 @@ class _OprecState extends State<Oprec> {
                                         FilteringTextInputFormatter.digitsOnly
                                       ],
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: 'masukkan NoHp!',
@@ -549,9 +561,9 @@ class _OprecState extends State<Oprec> {
                             ),
                             items: [
                               // Menambahkan opsi "none" secara manual
-                              DropdownMenuItem<String>(
+                              const DropdownMenuItem<String>(
                                 value: 'none',
-                                child: const Text(
+                                child: Text(
                                   'None',
                                   style: TextStyle(fontFamily: 'Poppins'),
                                 ),
@@ -591,7 +603,13 @@ class _OprecState extends State<Oprec> {
                                     onPressed: () {
                                       // oprecform((p0) => _addPerson(p0));
                                       print("test");
-                                      print(newoprec.namaController.text);
+                                      print(newoprec.nimController);
+                                      print(newoprec.namaController);
+                                      print(newoprec.emailController);
+                                      print(newoprec.prodiController);
+                                      print(newoprec.no_telpController);
+                                      print(newoprec.divisi_1Controller);
+                                      print(newoprec.divisi_2Controller);
 
                                       oprecmodel dataBaru =
                                           newoprec.convertToModel();
