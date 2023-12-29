@@ -46,9 +46,10 @@ class _DivisiState extends State<Divisi> {
   final Map<int, String> fiturdiv = {
     0: '/futsal',
     1: '/basket',
-    2: '/catur',
-    3: '/tarungderajat',
-    4: '/badminthon',
+    2: '/volly',
+    3: '/badminthon',
+    4: '/karate',
+    5: '/silat'
   };
 
   @override

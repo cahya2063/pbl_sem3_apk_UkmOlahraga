@@ -5,17 +5,19 @@ import 'package:pblukm/models/oprec.dart';
 class oprecform2 {
   final namaController = TextEditingController();
   final nimController = TextEditingController();
-  final prodiController = TextEditingController();
   final emailController = TextEditingController();
+
+  final prodiController = TextEditingController();
   final no_telpController = TextEditingController();
   final divisi_1Controller = TextEditingController();
   final divisi_2Controller = TextEditingController();
+  final semesterController = TextEditingController();
 
 
   oprecmodel convertToModel() {
     emailController.text = formloginState.email;
     nimController.text = formloginState.nim;
-    prodiController.text = formloginState.prodi;
+    // prodiController.text = formloginState.prodi;
     namaController.text = formloginState.nama;
     oprecmodel newoprec = oprecmodel(
       nama: this.namaController.text,
@@ -23,6 +25,7 @@ class oprecform2 {
       prodi: this.prodiController.text,
       email: this.emailController.text,
       no_telp: this.no_telpController.text,
+      semester: this.semesterController.text,
       divisi_1: this.divisi_1Controller.text,
       divisi_2: this.divisi_2Controller.text,
     );

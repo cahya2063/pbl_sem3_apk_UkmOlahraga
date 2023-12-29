@@ -1,5 +1,5 @@
 import 'dart:ffi';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class oprecmodel {
@@ -9,6 +9,7 @@ class oprecmodel {
   String prodi;
   String? email;
   String no_telp;
+  String semester;
   String? cv; // boleh null
   String divisi_1;
   String? divisi_2; // boleh null
@@ -22,6 +23,7 @@ class oprecmodel {
     required this.prodi,
     required this.email,
     required this.no_telp,
+    required this.semester,
     this.cv,
     required this.divisi_1,
     this.divisi_2,
@@ -37,7 +39,8 @@ class oprecmodel {
         prodi: json['prodi'] as String,
         email: json['email'] as String,
         no_telp: json['no_telp'] as String,
-        cv: json['cv'],
+        semester: json['semester'] as String,
+        cv: json['cv'] as String,
         divisi_1: json['divisi_1'] as String,
         divisi_2: json['divisi_2'] ,
         jabatan: json['jabatan'] as String,
@@ -51,6 +54,7 @@ class oprecmodel {
     dataoprec['prodi'] = prodi;
     dataoprec['email'] = email;
     dataoprec['no_telp'] = no_telp;
+    dataoprec['semester'] = semester;
     dataoprec['cv'] = cv;
     dataoprec['divisi_1'] = divisi_1;
     dataoprec['divisi_2'] = divisi_2;

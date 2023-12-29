@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pblukm/form/oprecform2.dart';
+import 'package:pblukm/form/registerform.dart';
 import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/oprec.dart';
 import 'package:http/http.dart' as http;
@@ -24,12 +25,16 @@ class Oprec extends StatefulWidget {
 class _OprecState extends State<Oprec> {
   late List<oprecmodel> data = [];
   late List<modelDiv> divisi = []; //list untuk tampung data API tabel divisi
+  bool isCvUpload = false;
+
+  File? file;
+  String filename = '';
 
   Future<List<modelDiv>> fetchDatadivisi() async {
     final response =
         await http.get(Uri.parse('http://10.0.2.2:8000/api/divisi/view'));
     if (response.statusCode == 200) {
-      List<dynamic> responseBody = json.decode(response.body);
+      List<dynamic> responseBody = jsonDecode(response.body);
 
       List<dynamic> divisiList = responseBody[0];
 
@@ -44,24 +49,24 @@ class _OprecState extends State<Oprec> {
     }
   }
 
-  Future<List<oprecmodel>> fetchData() async {
-    final response =
-        await http.get(Uri.parse('http://10.0.2.2:8000/api/anggota/view'));
-    if (response.statusCode == 200) {
-      // Map<String, dynamic> responseBody = json.decode(response.body);
-      // List<dynamic> divisiList = responseBody['data'];
+  // Future<List<oprecmodel>> fetchData() async {
+  //   final response =
+  //       await http.get(Uri.parse('http://10.0.2.2:8000/api/pendaftaran/view'));
+  //   if (response.statusCode == 200) {
+  //     // Map<String, dynamic> responseBody = json.decode(response.body);
+  //     // List<dynamic> divisiList = responseBody['data'];
 
-      List<dynamic> responseBody = json.decode(response.body);
-      List<dynamic> divisiList = responseBody.elementAt(0);
+  //     List<dynamic> responseBody = json.decode(response.body);
+  //     List<dynamic> divisiList = responseBody.elementAt(0);
 
-      List<oprecmodel> oprec =
-          divisiList.map((item) => oprecmodel.fromjson(item)).toList();
+  //     List<oprecmodel> oprec =
+  //         divisiList.map((item) => oprecmodel.fromjson(item)).toList();
 
-      return oprec;
-    } else {
-      throw "Failed to load data: ${response.statusCode}";
-    }
-  }
+  //     return oprec;
+  //   } else {
+  //     throw "Failed to load data: ${response.statusCode}";
+  //   }
+  // }
 
   @override
   void initState() {
@@ -77,48 +82,55 @@ class _OprecState extends State<Oprec> {
   }
 
   Future<void> _addPerson(oprecmodel person) async {
+    if (file == null) {
+      print('Tidak ada gambar yang dipilih');
+      return;
+    }
+
+    if (!isCvUpload) {
+      return;
+    }
+    // Mengonversi gambar menjadi base64
+    String base64Image = base64Encode(file!.readAsBytesSync());
+    person.cv = base64Image;
+
+    // Mengirim data ke endpoint API untuk pengunggahan gambar
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/anggota/create'),
+      Uri.parse('http://10.0.2.2:8000/api/pendaftaran/create'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
       body: jsonEncode(person.tojson()),
     );
-      if (response.statusCode == 200) {
-        fetchData().then((value) {
-          setState(() {
-            data = value;
-          });
-        });
-      } else {
-        print(response.body);
-        throw "Failed to add data ${response.statusCode}";
-      }
-    
+
+    if (response.statusCode == 200) {
+      // Logika setelah pengunggahan berhasil
+      print('Gambar berhasil diunggah.');
+    } else {
+      // Penanganan kesalahan jika pengunggahan gagal
+      print('Gagal mengunggah gambar: ${response.statusCode}');
+      print(response.body);
+    }
   }
 
   oprecform2 newoprec = oprecform2();
-  //formloginState access = formloginState();
 
-  List<String> div1 = ['basket', 'futsal', 'badminthon', 'catur', 'taekwondo'];
-  String selctdiv1 = 'basket';
-  List<String> div2 = [
-    'none',
-    'basket',
-    'futsal',
-    'badminthon',
-    'catur',
-    'taekwondo'
-  ];
+  String selctdiv1 = 'Basket';
+
   String selctdiv2 = 'none';
-  File? file;
-  String filename = '';
+
+  List<String> jurusan = ['sipil', 'TRM', 'JBI', 'AGB', 'MBP'];
+  String selectjr = 'sipil';
+  List<String> semester = ['1', '3'];
+  String selectsemester = '1';
   void kembali() {
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    newoprec.prodiController.text = selectjr;
+    newoprec.semesterController.text = selectsemester;
     return WillPopScope(
       onWillPop: () async {
         kembali();
@@ -144,7 +156,7 @@ class _OprecState extends State<Oprec> {
               const Padding(
                 padding: EdgeInsets.only(top: 0, bottom: 40),
                 child: Text(
-                  'Recruitment',
+                  'Pendaftaran',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'PoppinsBold',
@@ -152,6 +164,7 @@ class _OprecState extends State<Oprec> {
                   ),
                 ),
               ),
+              //teks pendaftaran
               Expanded(
                 child: Container(
                   height: 500,
@@ -163,6 +176,7 @@ class _OprecState extends State<Oprec> {
                       topRight: Radius.circular(40),
                     ),
                   ),
+                  //container putih
                   child: Padding(
                     padding:
                         const EdgeInsets.only(top: 38, left: 35, right: 35),
@@ -175,6 +189,7 @@ class _OprecState extends State<Oprec> {
                             style: TextStyle(
                                 fontFamily: 'PoppinsBold', fontSize: 15),
                           ),
+                          //teks email
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
@@ -188,8 +203,9 @@ class _OprecState extends State<Oprec> {
                                       // onSubmitted: (_) => newoprec.daftar(),
                                       keyboardType: TextInputType.emailAddress,
                                       decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 10),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: '${formloginState.email}',
                                         enabledBorder: OutlineInputBorder(
@@ -234,8 +250,9 @@ class _OprecState extends State<Oprec> {
                                       controller: newoprec.namaController,
                                       // onSubmitted: (_) => newoprec.daftar(),
                                       decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 10),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: '${formloginState.nama}',
                                         enabledBorder: OutlineInputBorder(
@@ -269,7 +286,7 @@ class _OprecState extends State<Oprec> {
                                 fontFamily: 'PoppinsBold', fontSize: 15),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 30),
+                            padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
                               children: [
                                 Expanded(
@@ -284,8 +301,9 @@ class _OprecState extends State<Oprec> {
                                         FilteringTextInputFormatter.digitsOnly
                                       ],
                                       decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 10),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: '${formloginState.nim}',
                                         enabledBorder: OutlineInputBorder(
@@ -319,7 +337,7 @@ class _OprecState extends State<Oprec> {
                                 fontFamily: 'PoppinsBold', fontSize: 15),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 30),
+                            padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
                               children: [
                                 Expanded(
@@ -327,15 +345,16 @@ class _OprecState extends State<Oprec> {
                                     height: 50,
                                     child: TextField(
                                       readOnly: true,
-                                      controller: newoprec.prodiController,
+                                      controller: newoprec.nimController,
                                       // onSubmitted: (_) => newoprec.daftar(),
                                       keyboardType: TextInputType.number,
                                       inputFormatters: [
                                         FilteringTextInputFormatter.digitsOnly
                                       ],
                                       decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 10),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 5, horizontal: 10),
                                         filled: false,
                                         hintText: '${formloginState.prodi}',
                                         enabledBorder: OutlineInputBorder(
@@ -362,7 +381,7 @@ class _OprecState extends State<Oprec> {
                               ],
                             ),
                           ),
-                          //input jurusan
+                          //input prodi
                           const Text(
                             'No Hp',
                             style: TextStyle(
@@ -383,10 +402,11 @@ class _OprecState extends State<Oprec> {
                                         FilteringTextInputFormatter.digitsOnly
                                       ],
                                       decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 10),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: 'masukkan NoHp!',
+                                        hintText: 'Masukkan No Hp',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -413,12 +433,59 @@ class _OprecState extends State<Oprec> {
                           ),
                           //input no hp
                           const Text(
+                            'Semester',
+                            style: TextStyle(
+                                fontFamily: 'PoppinsBold', fontSize: 15),
+                          ),
+                          // text nama
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: DropdownButtonFormField<String>(
+                              value: selectsemester,
+                              onChanged: (newvalue) {
+                                setState(() {
+                                  selectsemester = newvalue!;
+                                  newoprec.semesterController.text =
+                                      selectsemester;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                // labelText: 'pilihan 1',
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: const BorderSide(
+                                      width: 2.0,
+                                      color: Colors.blue,
+                                    )),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                    )),
+                                labelStyle:
+                                    const TextStyle(fontFamily: 'Poppins'),
+                              ),
+                              items: semester.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style:
+                                        const TextStyle(fontFamily: 'Poppins'),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          //dropdown semester
+                          const Text(
                             'CV',
                             style: TextStyle(
                                 fontFamily: 'PoppinsBold', fontSize: 15),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 30),
+                            padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
                               children: [
                                 Flexible(
@@ -489,8 +556,16 @@ class _OprecState extends State<Oprec> {
                             ),
                           ),
                           // input gambar
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              'Divisi',
+                              style: TextStyle(
+                                  fontFamily: 'PoppinsBold', fontSize: 15),
+                            ),
+                          ),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 30),
+                            padding: const EdgeInsets.only(bottom: 10),
                             child: DropdownButtonFormField<String>(
                               value: selctdiv1,
                               onChanged: (newvalue) {
@@ -500,7 +575,7 @@ class _OprecState extends State<Oprec> {
                                 });
                               },
                               decoration: InputDecoration(
-                                labelText: 'pilihan 1',
+                                // labelText: 'pilihan 1',
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(15),
                                     borderSide: const BorderSide(
@@ -544,7 +619,7 @@ class _OprecState extends State<Oprec> {
                               );
                             },
                             decoration: InputDecoration(
-                              labelText: 'pilihan 2',
+                              // labelText: 'pilihan 2',
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
                                   borderSide: const BorderSide(
@@ -601,29 +676,31 @@ class _OprecState extends State<Oprec> {
                                           255, 13, 41, 183),
                                     ),
                                     onPressed: () {
-                                      // oprecform((p0) => _addPerson(p0));
-                                      print("test");
-                                      print(newoprec.nimController);
-                                      print(newoprec.namaController);
-                                      print(newoprec.emailController);
-                                      print(newoprec.prodiController);
-                                      print(newoprec.no_telpController);
-                                      print(newoprec.divisi_1Controller);
-                                      print(newoprec.divisi_2Controller);
-
-                                      oprecmodel dataBaru =
-                                          newoprec.convertToModel();
-                                      _addPerson(dataBaru);
-
-                                      // oprecmodel dummy = oprecmodel(
-                                      //     nama: "coba",
-                                      //     nim: "123",
-                                      //     prodi: "trpl",
-                                      //     email: "asd@gmail.com",
-                                      //     no_telp: "123",
-                                      //     divisi_1: "badminton");
-                                      // _addPerson(dummy);
-                                      Navigator.pop(context);
+                                      if (!isCvUpload) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Peringatan'),
+                                              content: const Text(
+                                                  'Anda harus mengunggah CV terlebih dahulu.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        oprecmodel dataBaru =
+                                            newoprec.convertToModel();
+                                        _addPerson(dataBaru);
+                                        Navigator.pop(context);
+                                      }
                                     },
                                     child: const Text(
                                       'Submit',
@@ -655,10 +732,12 @@ class _OprecState extends State<Oprec> {
     // ignore: non_constant_identifier_names
     final PickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery); //mengambil gambar dari source galeri
+
     setState(() {
       if (PickedFile != null) {
         file = File(PickedFile.path); //mengambil gambar
         filename = file!.path.split('/').last; //mengambil nama file dari path
+        isCvUpload = true;
       } else {
         'tidak ada gambar dipilih';
       }

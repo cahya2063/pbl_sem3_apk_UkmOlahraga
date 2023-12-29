@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:pblukm/editprof.dart';
 import 'package:pblukm/login.dart';
+import 'package:pblukm/loginform.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -20,6 +21,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     return Scaffold(
       body: Column(
         children: [
@@ -42,10 +44,10 @@ class _ProfileState extends State<Profile> {
                         'img/avatar.png',
                         width: 100,
                       ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(bottom: 10),
                         child: Text(
-                          'Devita',
+                          '${formloginState.nama}',
                           style: TextStyle(
                               fontFamily: 'PoppinsBold', fontSize: 30),
                         ),
@@ -101,46 +103,46 @@ class _ProfileState extends State<Profile> {
                                       blurRadius: 3)
                                 ],
                                 borderRadius: BorderRadius.circular(20)),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.only(top: 15, left: 20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
+                                  const Padding(
                                     padding: EdgeInsets.only(bottom: 10),
                                     child: Text(
                                       'Detail Pengguna',
                                       style: TextStyle(fontSize: 18),
                                     ),
                                   ),
-                                  Text(
+                                  const Text(
                                     'Nim',
                                     style: TextStyle(
                                         fontFamily: 'PoppinsBold',
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '3622583020xx',
+                                    '${formloginState.nim}',
                                     style: TextStyle(fontSize: 15),
                                   ),
-                                  Text(
+                                  const Text(
                                     'Gmail',
                                     style: TextStyle(
                                         fontFamily: 'PoppinsBold',
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    'devita@emanil.com',
+                                    '${formloginState.email}',
                                     style: TextStyle(fontSize: 15),
                                   ),
-                                  Text(
-                                    'Kota',
+                                  const Text(
+                                    'Prodi',
                                     style: TextStyle(
                                         fontFamily: 'PoppinsBold',
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    'Banyuwangi',
+                                    '${formloginState.prodi}',
                                     style: TextStyle(fontSize: 15),
                                   ),
                                 ],

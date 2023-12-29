@@ -103,13 +103,15 @@ class _StokState extends State<Stok> {
                                               ),
                                             ),
                                           ),
-                                          //searching
+                                         
                                         ),
+                                         //searching
                                         Expanded(
                                           child: Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 10),
                                             child: SingleChildScrollView(
+                                              //bagian yang akan diganti dengan listview builder
                                               child: Column(
                                                 children: [
                                                   Padding(
@@ -775,7 +777,11 @@ class _StokState extends State<Stok> {
                                     const EdgeInsets.only(left: 50, right: 50),
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    displaySheets(context);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: ((context) =>
+                                                Pinjamform())));
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
@@ -820,74 +826,4 @@ class _StokState extends State<Stok> {
       ),
     );
   }
-}
-
-Future displaySheets(BuildContext context) {
-  return showModalBottomSheet(
-    context: context,
-    shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
-    builder: (context) => SizedBox(
-      height: 250,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20, bottom: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 50, right: 50),
-                    child: SizedBox(
-                      height: 60,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Pinjamform()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 13, 41, 183),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15))),
-                          child: const Text(
-                            'peminjaman alat',
-                            style: TextStyle(fontSize: 20),
-                          )),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 50, right: 50),
-                    child: SizedBox(
-                      height: 60,
-                      child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 13, 41, 183),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15))),
-                          child: const Text(
-                            'pengambalian alat',
-                            style: TextStyle(fontSize: 20),
-                          )),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 }

@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pblukm/loginform.dart';
+import 'package:http/http.dart' as http;
 
 class EditProf extends StatefulWidget {
   const EditProf({super.key});
@@ -13,6 +17,29 @@ class EditProf extends StatefulWidget {
 class _EditProfState extends State<EditProf> {
   File? file;
   String filename = '';
+
+  final textEditEmail = TextEditingController();
+  final textEditPass = TextEditingController();
+  int? id = formloginState.iduser;
+  Future<void> editprof() async {
+    var url = Uri.parse('http://10.0.2.2:8000/api/edit/profil/$id');
+
+    var response = await http.post(url, body: {
+      'email': textEditEmail.text,
+    });
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+
+      if (data['status'] == true) {
+        print(data['message']);
+      } else {
+        print('gagal update data');
+      }
+    } else {
+      throw "${response.statusCode}";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +89,7 @@ class _EditProfState extends State<EditProf> {
                                     left: 20, right: 20, top: 50),
                                 child: Container(
                                   // Sesuaikan tinggi Container agar cukup besar
-                                  height: 450, // Ubah tinggi sesuai kebutuhan
+                                  height: 300, // Ubah tinggi sesuai kebutuhan
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(
@@ -83,102 +110,6 @@ class _EditProfState extends State<EditProf> {
                                         Row(
                                           children: [
                                             const Expanded(
-                                                flex: 2,
-                                                child: Text('Nama Depan')),
-                                            const Expanded(
-                                                flex: 0,
-                                                child: Text(
-                                                  ':',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20),
-                                                )),
-                                            const SizedBox(width: 10),
-                                            Expanded(
-                                              flex: 5,
-                                              child: TextField(
-                                                decoration: InputDecoration(
-                                                  contentPadding:
-                                                      const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 10,
-                                                          horizontal: 10),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Expanded(
-                                                flex: 2,
-                                                child: Text('Nama Belakang')),
-                                            const Expanded(
-                                                flex: 0,
-                                                child: Text(
-                                                  ':',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20),
-                                                )),
-                                            const SizedBox(width: 10),
-                                            Expanded(
-                                              flex: 5,
-                                              child: TextField(
-                                                decoration: InputDecoration(
-                                                  contentPadding:
-                                                      const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 10,
-                                                          horizontal: 10),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Expanded(
                                                 flex: 2, child: Text('Gmail')),
                                             const Expanded(
                                                 flex: 0,
@@ -193,9 +124,12 @@ class _EditProfState extends State<EditProf> {
                                             Expanded(
                                               flex: 5,
                                               child: TextField(
+                                                controller: textEditEmail,
                                                 keyboardType:
                                                     TextInputType.emailAddress,
                                                 decoration: InputDecoration(
+                                                  hintText:
+                                                      '${formloginState.email}',
                                                   contentPadding:
                                                       const EdgeInsets
                                                           .symmetric(
@@ -225,53 +159,7 @@ class _EditProfState extends State<EditProf> {
                                             ),
                                           ],
                                         ),
-                                        Row(
-                                          children: [
-                                            const Expanded(
-                                                flex: 2, child: Text('Alamat')),
-                                            const Expanded(
-                                                flex: 0,
-                                                child: Text(
-                                                  ':',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20),
-                                                )),
-                                            const SizedBox(width: 10),
-                                            Expanded(
-                                              flex: 5,
-                                              child: TextField(
-                                                decoration: InputDecoration(
-                                                  contentPadding:
-                                                      const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 10,
-                                                          horizontal: 10),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black),
-                                                  ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color:
-                                                                Colors.black),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10.0),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+
                                         Row(
                                           children: [
                                             const Expanded(
@@ -379,6 +267,7 @@ class _EditProfState extends State<EditProf> {
                                           children: [
                                             ElevatedButton(
                                                 onPressed: () {
+                                                  editprof();
                                                   Navigator.pop(context);
                                                 },
                                                 style: ElevatedButton.styleFrom(
@@ -389,9 +278,10 @@ class _EditProfState extends State<EditProf> {
                                                                     .circular(
                                                                         10)),
                                                     backgroundColor:
-                                                        const Color(0xff4741A6)),
-                                                child:
-                                                    const Text('perbarui profile')),
+                                                        const Color(
+                                                            0xff4741A6)),
+                                                child: const Text(
+                                                    'perbarui profile')),
                                             ElevatedButton(
                                                 onPressed: () {
                                                   Navigator.pop(context);
@@ -404,7 +294,8 @@ class _EditProfState extends State<EditProf> {
                                                                     .circular(
                                                                         10)),
                                                     backgroundColor:
-                                                        const Color(0xff7A7A7A)),
+                                                        const Color(
+                                                            0xff7A7A7A)),
                                                 child: const Text('batal')),
                                           ],
                                         )

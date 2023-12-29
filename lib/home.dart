@@ -8,6 +8,7 @@ import 'package:pblukm/oprec.dart';
 import 'package:pblukm/pinjamform.dart';
 //import 'package:pblukm/stok.dart';
 import 'package:http/http.dart' as http;
+import 'package:pblukm/stok.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
@@ -24,11 +25,21 @@ class _HomeState extends State<Home> {
     _getdataFormAPI();
   }
 
-
   List<dynamic> articles1 = [];
-  bool hasilFetchOpenRecr = true;
+  // dynamic status = formloginState.statuspendaftar;
+  bool recruitment = true;
   @override
   Widget build(BuildContext context) {
+    //setState(() {});
+    if (formloginState.statuspendaftar.contains('terima')) {
+      recruitment = false;
+    } else if (formloginState.statuspendaftar.contains('menunggu')) {
+      recruitment = false;
+    } else if (formloginState.statuspendaftar.contains('tolak')) {
+      recruitment = false;
+    } else if (formloginState.statuspendaftar.contains('anda belum daftar')) {
+      recruitment = true;
+    }
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(right: 20, left: 20, top: 20),
@@ -50,35 +61,53 @@ class _HomeState extends State<Home> {
                     child: Column(
                       children: [
                         const Text(
-                          //'${formloginState.token}',
                           'welcome',
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                         //teks welcome
                         Text(
                           '${formloginState.nama}',
-                          style: const TextStyle(fontSize: 15, color: Colors.black),
+                          style: const TextStyle(
+                              fontSize: 15, color: Colors.black),
                         ),
                       ],
                     ),
                   ),
-                  //user name
-                  // const Expanded(
-                  //   child: SizedBox(
-                  //     width: 10,
-                  //   ),
-                  // ),
+                  // user name
+                  const Expanded(
+                    child: SizedBox(
+                      width: 10,
+                    ),
+                  ),
                   //jarak antara profil dan icon notifikasi
-                  // Padding(
-                  //   padding: const EdgeInsets.only(right: 0),
-                  //   child: IconButton(
-                  //       onPressed: () {},
-                  //       icon: const Icon(
-                  //         Iconsax.notification_bing,
-                  //         size: 30,
-                  //       )),
-                  // )
-                  //icon notifikasi
+                  Padding(
+                    padding: const EdgeInsets.only(right: 0),
+                    child: IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title:
+                                    Text('${formloginState.statuspendaftar}'),
+                                content:
+                                    const Text('Email atau password salah.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(
+                          Iconsax.notification_bing,
+                          size: 30,
+                        )),
+                  )
+                  // icon notifikasi
                 ],
               ),
             ),
@@ -114,10 +143,30 @@ class _HomeState extends State<Home> {
                             height: 100,
                             child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Oprec()));
+                                recruitment == false
+                                    ? showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text(
+                                                'data mu sudah terdaftar nihhh'),
+                                            content: const Text(
+                                                'Tunggu pemberitahuan selanjutnya ya!!'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      )
+                                    : Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const Oprec()));
                               },
                               style: ElevatedButton.styleFrom(
                                   side: const BorderSide(color: Colors.blue),
@@ -136,7 +185,7 @@ class _HomeState extends State<Home> {
                                     color: Colors.green,
                                   ),
                                   Text(
-                                    'Recruitment',
+                                    'Pendaftaran',
                                     style: TextStyle(color: Colors.black),
                                   )
                                 ],
@@ -195,6 +244,7 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                     ),
+                    //teks berita olahrga
                     SizedBox(
                       height: 400,
                       child: ListView.builder(
@@ -219,6 +269,7 @@ class _HomeState extends State<Home> {
                             );
                           }),
                     ),
+                    //halaman berita
                     const SizedBox(
                       height: 20,
                     )
@@ -295,7 +346,7 @@ Future displaySheets(BuildContext context) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Pinjamform()));
+                                    builder: (context) => const Stok()));
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor:

@@ -17,9 +17,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
-
-   Future<List<Registermodel>> fetchData() async {
+  Future<List<Registermodel>> fetchData() async {
     final response =
         await http.get(Uri.parse('http://10.0.2.2:8000/api/user/view'));
     if (response.statusCode == 200) {
@@ -38,26 +36,23 @@ class _RegisterState extends State<Register> {
     }
   }
 
-
   Future<void> regisApi(Registermodel regist) async {
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8000/api/register'),
-      body: jsonEncode(regist.toJson()),//json data
+      body: jsonEncode(regist.toJson()), //json data
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       var jsonresponse = jsonDecode(response.body);
       print('register berhasil : $jsonresponse');
-    }
-    else {
+    } else {
       print(response.body);
       throw "Failed to add data ${response.statusCode}";
     }
   }
-
 
   registerform newreg = registerform();
   bool obscuretext = true;
@@ -105,32 +100,46 @@ class _RegisterState extends State<Register> {
                 //white container
                 child: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Padding(
                         padding: EdgeInsets.only(top: 30),
-                        child: Text(
-                          "Let's Get Started!",
-                          style: TextStyle(fontSize: 28),
+                        child: Center(
+                          child: Text(
+                            "Let's Get Started!",
+                            style: TextStyle(fontSize: 28),
+                          ),
                         ),
                       ),
                       //teks welcome back!
                       const Padding(
                         padding: EdgeInsets.only(top: 7),
-                        child: Text(
-                          'Create a new account',
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        child: Center(
+                          child: Text(
+                            'Create a new account',
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
                         ),
                       ),
                       //teks continue to your account
+                      const Padding(
+                        padding: EdgeInsets.only(left: 30, top: 30),
+                        child: Text(
+                          'Nama',
+                          style: TextStyle(
+                              fontFamily: 'PoppinsBold', fontSize: 15),
+                        ),
+                      ),
+                      // text nama
                       Padding(
                         padding: const EdgeInsets.only(
-                            right: 30, left: 30, bottom: 30, top: 30),
+                            right: 30, left: 30, bottom: 20, top: 0),
                         child: TextField(
                           controller: newreg.textName,
                           decoration: InputDecoration(
                             filled: false,
                             //fillColor: Color.fromARGB(104, 31, 65, 187),
-                            hintText: 'masukkan Namamu',
+                            hintText: 'Masukkan Nama',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
                               borderSide: const BorderSide(color: Colors.black),
@@ -143,6 +152,15 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                       //bagian input username
+                      const Padding(
+                        padding: EdgeInsets.only(left: 30, top: 0),
+                        child: Text(
+                          'Nim',
+                          style: TextStyle(
+                              fontFamily: 'PoppinsBold', fontSize: 15),
+                        ),
+                      ),
+                      // text nim
                       Padding(
                         padding: const EdgeInsets.only(
                             bottom: 30, right: 30, left: 30),
@@ -159,7 +177,7 @@ class _RegisterState extends State<Register> {
                                 decoration: InputDecoration(
                                   filled: false,
                                   //fillColor: Color.fromARGB(104, 31, 65, 187),
-                                  hintText: 'masukkan Nimmu',
+                                  hintText: 'Masukkan Nim',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                     borderSide:
@@ -179,7 +197,7 @@ class _RegisterState extends State<Register> {
                       //input NIM
                       Padding(
                         padding: const EdgeInsets.only(
-                            bottom: 30, left: 30, right: 30),
+                            bottom: 20, left: 30, right: 30),
                         child: DropdownButtonFormField<String>(
                           value: selectjr,
                           onChanged: (newvalue) {
@@ -213,9 +231,18 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                       //dropdown prodi
+                      const Padding(
+                        padding: EdgeInsets.only(left: 30, top: 0),
+                        child: Text(
+                          'Email',
+                          style: TextStyle(
+                              fontFamily: 'PoppinsBold', fontSize: 15),
+                        ),
+                      ),
+                      // text email
                       Padding(
                         padding: const EdgeInsets.only(
-                            bottom: 30, left: 30, right: 30),
+                            bottom: 20, left: 30, right: 30),
                         child: Row(
                           children: [
                             Expanded(
@@ -226,7 +253,7 @@ class _RegisterState extends State<Register> {
                                 decoration: InputDecoration(
                                   filled: false,
                                   //fillColor: Color.fromARGB(104, 31, 65, 187),
-                                  hintText: 'masukkan Emailmu',
+                                  hintText: 'Masukkan Email',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                     borderSide:
@@ -244,6 +271,15 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                       //input email
+                      const Padding(
+                        padding: EdgeInsets.only(left: 30, top: 0),
+                        child: Text(
+                          'Password',
+                          style: TextStyle(
+                              fontFamily: 'PoppinsBold', fontSize: 15),
+                        ),
+                      ),
+                      // text nama
                       Padding(
                         padding: const EdgeInsets.only(
                             right: 30, left: 30, top: 0, bottom: 30),
@@ -261,7 +297,7 @@ class _RegisterState extends State<Register> {
                                   ? Iconsax.eye
                                   : Iconsax.eye_slash),
                             ),
-                            hintText: 'Password SSO',
+                            hintText: 'Masukkan Password',
                             border: OutlineInputBorder(
                               borderSide: const BorderSide(color: Colors.black),
                               borderRadius: BorderRadius.circular(10.0),
@@ -292,7 +328,8 @@ class _RegisterState extends State<Register> {
                                       print(newreg.textPass);
                                       print(newreg.textProdi);
 
-                                      Registermodel dataBaru = newreg.convertToModel();
+                                      Registermodel dataBaru =
+                                          newreg.convertToModel();
                                       regisApi(dataBaru);
                                       // Navigator.push(
                                       //   context,
