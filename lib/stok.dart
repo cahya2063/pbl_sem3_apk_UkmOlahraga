@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:pblukm/models/alatmodel.dart';
+import 'package:http/http.dart' as http;
+//import 'package:pblukm/models/jadwalmodel.dart';
 //import 'package:pblukm/fiturdiv.dart';
 import 'package:pblukm/pinjamform.dart';
 
@@ -11,8 +16,37 @@ class Stok extends StatefulWidget {
 }
 
 class _StokState extends State<Stok> {
+  late List<Modelalat> alat = [];
+
+  Future<List<Modelalat>> fetchDataAlat() async {
+    var response =
+        await http.get(Uri.parse('http://10.0.2.2:8000/api/stok/alat'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> responseBody = json.decode(response.body);
+      List<dynamic> alatList = responseBody[0];
+      List<Modelalat> alats =
+          alatList.map((item) => Modelalat.fromJson(item)).toList();
+
+      return alats;
+    } else {
+      throw "tidak bisa ambil data alat ${response.statusCode}";
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDataAlat().then((value) {
+      setState(() {
+        alat = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -26,6 +60,7 @@ class _StokState extends State<Stok> {
               color: Colors.black,
             )),
       ),
+      //appbar
       backgroundColor: const Color(0xFFDBEAFF),
       body: Center(
         child: Column(
@@ -40,15 +75,19 @@ class _StokState extends State<Stok> {
                     overflow: TextOverflow.ellipsis),
               ),
             ),
+            //teks peminjaman
             Expanded(
               child: Container(
                 height: 500,
                 width: 500,
                 decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40))),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                ),
+                //container putih
                 child: Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: SingleChildScrollView(
@@ -103,89 +142,18 @@ class _StokState extends State<Stok> {
                                               ),
                                             ),
                                           ),
-                                         
                                         ),
-                                         //searching
+                                        //searching
                                         Expanded(
                                           child: Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 10),
-                                            child: SingleChildScrollView(
-                                              //bagian yang akan diganti dengan listview builder
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 20),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    10)),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 3.0,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5),
-                                                            child: Text(
-                                                              'bola basket',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 90),
-                                                              child: Container(
-                                                                height: 30,
-                                                                decoration: const BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    '12',
-                                                                    style: TextStyle(
-                                                                        fontFamily:
-                                                                            'Poppins',
-                                                                        color: Color(
-                                                                            0xff9BBBFC),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            18),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  //list bola basket
-                                                  Padding(
+                                            child: ListView.builder(
+                                                itemCount: alat.length,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        index) {
+                                                  return Padding(
                                                     padding:
                                                         const EdgeInsets.only(
                                                             top: 10),
@@ -203,13 +171,14 @@ class _StokState extends State<Stok> {
                                                       ),
                                                       child: Row(
                                                         children: [
-                                                          const Padding(
+                                                          Padding(
                                                             padding:
-                                                                EdgeInsets.only(
+                                                                const EdgeInsets
+                                                                    .only(
                                                                     left: 5),
                                                             child: Text(
-                                                              'bola futsal',
-                                                              style: TextStyle(
+                                                              alat[index].nama,
+                                                              style: const TextStyle(
                                                                   fontSize: 18,
                                                                   fontWeight:
                                                                       FontWeight
@@ -232,12 +201,11 @@ class _StokState extends State<Stok> {
                                                                     borderRadius:
                                                                         BorderRadius.all(
                                                                             Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
+                                                                child: Center(
                                                                   child: Text(
-                                                                    '8',
+                                                                    '${alat[index].stok}',
                                                                     style:
-                                                                        TextStyle(
+                                                                        const TextStyle(
                                                                       fontSize:
                                                                           18,
                                                                       fontWeight:
@@ -254,508 +222,9 @@ class _StokState extends State<Stok> {
                                                         ],
                                                       ),
                                                     ),
-                                                  ),
-                                                  // list bola futsal
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    10)),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 3.0,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5),
-                                                            child: Text(
-                                                              'bola takraw',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 90),
-                                                              child: Container(
-                                                                height: 30,
-                                                                decoration: const BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    '19',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color(
-                                                                          0xff9BBBFC),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  //bola takraw
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    10)),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 3.0,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5),
-                                                            child: Text(
-                                                              'bola volly',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 90),
-                                                              child: Container(
-                                                                height: 30,
-                                                                decoration: const BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    '4',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color(
-                                                                          0xff9BBBFC),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  //list bola volly
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    10)),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 3.0,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5),
-                                                            child: Text(
-                                                              'sarung tinju',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 90),
-                                                              child: Container(
-                                                                height: 30,
-                                                                decoration: const BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    '2',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color(
-                                                                          0xff9BBBFC),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  //list sarung tinju
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    10)),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 3.0,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5),
-                                                            child: Text(
-                                                              'matras',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 90),
-                                                              child: Container(
-                                                                height: 30,
-                                                                decoration: const BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    '4',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color(
-                                                                          0xff9BBBFC),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  //list matras
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    10)),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 3.0,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5),
-                                                            child: Text(
-                                                              'Raket',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 90),
-                                                              child: Container(
-                                                                height: 30,
-                                                                decoration: const BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    '5',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color(
-                                                                          0xff9BBBFC),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  //list raket
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    10)),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 3.0,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5),
-                                                            child: Text(
-                                                              'papan catur',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 90),
-                                                              child: Container(
-                                                                height: 30,
-                                                                decoration: const BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    '8',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color(
-                                                                          0xff9BBBFC),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  //list papan catur
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 10),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .all(
-                                                                Radius.circular(
-                                                                    10)),
-                                                        border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 3.0,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          const Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5),
-                                                            child: Text(
-                                                              'shuttle cock',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 90),
-                                                              child: Container(
-                                                                height: 30,
-                                                                decoration: const BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5))),
-                                                                child:
-                                                                    const Center(
-                                                                  child: Text(
-                                                                    '20',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Color(
-                                                                          0xff9BBBFC),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  //list shuttle cock
-                                                ],
-                                              ),
-                                            ),
+                                                  );
+                                                  //list alat UKM
+                                                }),
                                           ),
                                         ),
                                         const SizedBox(

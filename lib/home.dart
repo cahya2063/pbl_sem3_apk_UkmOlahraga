@@ -5,7 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/beritamodel.dart';
 import 'package:pblukm/oprec.dart';
-import 'package:pblukm/pinjamform.dart';
+//import 'package:pblukm/pinjamform.dart';
 //import 'package:pblukm/stok.dart';
 import 'package:http/http.dart' as http;
 import 'package:pblukm/stok.dart';
@@ -28,18 +28,41 @@ class _HomeState extends State<Home> {
   List<dynamic> articles1 = [];
   // dynamic status = formloginState.statuspendaftar;
   bool recruitment = true;
+  bool isPinjam = true;
+  String popPinjam = '';
   @override
   Widget build(BuildContext context) {
     //setState(() {});
     if (formloginState.statuspendaftar.contains('terima')) {
       recruitment = false;
+      popPinjam = 'terus aktif yaa!';
     } else if (formloginState.statuspendaftar.contains('menunggu')) {
       recruitment = false;
+      popPinjam = 'tunggu ACC dari kami ya!';
     } else if (formloginState.statuspendaftar.contains('tolak')) {
       recruitment = false;
-    } else if (formloginState.statuspendaftar.contains('anda belum daftar')) {
+      popPinjam = 'maaf nihh tapi kamu bukan anggota';
+    } else if (formloginState.statuspendaftar.contains('kamu belum daftar')) {
       recruitment = true;
+      popPinjam = 'ayo daftar jadi anggota kami...';
     }
+
+    if (formloginState.isAnggota.contains('Anggota')&& formloginState.statuspendaftar.contains('terima')) {
+      isPinjam = true;
+    }
+    else if(formloginState.isAnggota.contains('Anggota')&& formloginState.statuspendaftar.contains('menunggu')){
+      isPinjam = false;
+      popPinjam = 'tunggu ACC dari kami ya!';
+    }
+    else if(formloginState.isAnggota.contains('Anggota') && formloginState.statuspendaftar.contains('tolak')){
+      isPinjam = false;
+      popPinjam = 'coba lagi tahun depan yaa..';
+    }
+    else{
+      isPinjam = false;
+      popPinjam = 'ayo daftar jadi anggota kami...';
+    }
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(right: 20, left: 20, top: 20),
@@ -66,7 +89,7 @@ class _HomeState extends State<Home> {
                         ),
                         //teks welcome
                         Text(
-                          '${formloginState.nama}',
+                          '${formloginState.namaLogin}',
                           style: const TextStyle(
                               fontSize: 15, color: Colors.black),
                         ),
@@ -88,10 +111,9 @@ class _HomeState extends State<Home> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title:
-                                    Text('${formloginState.statuspendaftar}'),
+                                title: Text(formloginState.statuspendaftar),
                                 content:
-                                    const Text('Email atau password salah.'),
+                                     Text(popPinjam),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
@@ -148,10 +170,10 @@ class _HomeState extends State<Home> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: const Text(
-                                                'data mu sudah terdaftar nihhh'),
-                                            content: const Text(
-                                                'Tunggu pemberitahuan selanjutnya ya!!'),
+                                            title:  Text(
+                                                formloginState.statuspendaftar),
+                                            content:  Text(
+                                                popPinjam),
                                             actions: [
                                               TextButton(
                                                 onPressed: () =>
@@ -205,7 +227,26 @@ class _HomeState extends State<Home> {
                               height: 100,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  displaySheets(context);
+                                  isPinjam == false
+                                    ? showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                                formloginState.statuspendaftar),
+                                            content:  Text(
+                                                popPinjam),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      )
+                                    :displaySheets(context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                     side: const BorderSide(color: Colors.blue),
@@ -362,6 +403,7 @@ Future displaySheets(BuildContext context) {
                 ),
               ],
             ),
+            //tombol peminjaman alat
             Row(
               children: [
                 Expanded(
@@ -377,7 +419,7 @@ Future displaySheets(BuildContext context) {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15))),
                           child: const Text(
-                            'pengambalian alat',
+                            'pengembalian alat',
                             style: TextStyle(fontSize: 20),
                           )),
                     ),
@@ -385,6 +427,7 @@ Future displaySheets(BuildContext context) {
                 ),
               ],
             ),
+            //tombol pengembalian
           ],
         ),
       ),

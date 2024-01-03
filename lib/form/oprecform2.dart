@@ -15,10 +15,10 @@ class oprecform2 {
 
 
   oprecmodel convertToModel() {
-    emailController.text = formloginState.email;
-    nimController.text = formloginState.nim;
-    // prodiController.text = formloginState.prodi;
-    namaController.text = formloginState.nama;
+    emailController.text = formloginState.emailLogin;
+    nimController.text = formloginState.nimLogin;
+    prodiController.text = formloginState.prodiLogin;
+    namaController.text = formloginState.namaLogin;
     oprecmodel newoprec = oprecmodel(
       nama: this.namaController.text,
       nim: this.nimController.text,

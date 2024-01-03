@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/models/oprec.dart';
+//import 'package:pblukm/models/oprec.dart';
 //import 'package:pblukm/home.dart';
 import 'package:pblukm/navbar.dart';
 import 'package:http/http.dart' as http;
@@ -24,15 +24,15 @@ class formloginState extends State<formlogin> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   static String? token;
-  static var nama;
-  static var email;
-  static var nim;
-  static var prodi;
-  static int? iduser;
+  static var namaLogin;
+  static var emailLogin;
+  static var nimLogin;
+  static var prodiLogin;
+  static int? iduserLogin;
 
   //static var nimPendaftar;
   static var statuspendaftar = '';
-
+  static var isAnggota = '';
 // Bagian dari fungsi getStatusPendaftarByNIM
   Future<void> getStatusPendaftarByNIM() async {
     final response =
@@ -42,18 +42,24 @@ class formloginState extends State<formlogin> {
       final pendaftarData = data[0]; // Mengakses array dalam di indeks 0
 
       bool terdaftar = false;
+      bool anggota = true;
       // Anda dapat mengakses data pendaftaran seperti ini
       for (var pendaftar in pendaftarData) {
         // Menggunakan variabel 'pendaftar' untuk mengakses setiap objek data pendaftaran
 
         var nimpendaf = pendaftar['nim'];
-        if (nimpendaf == nim) {
+        if (nimpendaf == nimLogin) {
           statuspendaftar = pendaftar['status'];
+          isAnggota = pendaftar['jabatan'];
           terdaftar = true;
+          anggota = true;
         }
       }
       if (!terdaftar) {
         statuspendaftar = 'kamu belum terdaftar';
+      }
+      if(!anggota){
+        isAnggota = 'kamu bukan anggota';
       }
     } else {
       throw "Failed to load data: ${response.statusCode}";
@@ -94,12 +100,12 @@ class formloginState extends State<formlogin> {
         // ignore: use_build_context_synchronously
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const navbar()));
-        nama = nama1;
-        nim = nim1;
-        email = email1;
-        prodi = prodi1;
+        namaLogin = nama1;
+        nimLogin = nim1;
+        emailLogin = email1;
+        prodiLogin = prodi1;
         token = token1;
-        iduser = id1;
+        iduserLogin = id1;
         await getStatusPendaftarByNIM();
       } else {
         // Jika login gagal, tampilkan pesan kesalahan
@@ -199,12 +205,12 @@ class formloginState extends State<formlogin> {
                           const Padding(
                             padding: EdgeInsets.only(left: 30, top: 30),
                             child: Text(
-                              'Nama',
+                              'Email',
                               style: TextStyle(
                                   fontFamily: 'PoppinsBold', fontSize: 15),
                             ),
                           ),
-                          // text nama
+                          // text Email
                           Padding(
                             padding: const EdgeInsets.only(
                                 right: 30, left: 30, bottom: 20, top: 0),
@@ -323,6 +329,9 @@ class formloginState extends State<formlogin> {
                             ],
                           ),
                           //tombol Sign In
+                          SizedBox(
+                            height: 50,
+                          )
                         ],
                       ),
                     ),

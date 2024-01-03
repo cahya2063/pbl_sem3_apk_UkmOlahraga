@@ -20,7 +20,7 @@ class _EditProfState extends State<EditProf> {
 
   final textEditEmail = TextEditingController();
   final textEditPass = TextEditingController();
-  int? id = formloginState.iduser;
+  int? id = formloginState.iduserLogin;
   Future<void> editprof() async {
     var url = Uri.parse('http://10.0.2.2:8000/api/edit/profil/$id');
 
@@ -36,7 +36,7 @@ class _EditProfState extends State<EditProf> {
         print('gagal update data');
       }
     } else {
-      throw "${response.statusCode}";
+      throw "gagal update profile ${response.statusCode}";
     }
   }
 
@@ -129,7 +129,7 @@ class _EditProfState extends State<EditProf> {
                                                     TextInputType.emailAddress,
                                                 decoration: InputDecoration(
                                                   hintText:
-                                                      '${formloginState.email}',
+                                                      '${formloginState.emailLogin}',
                                                   contentPadding:
                                                       const EdgeInsets
                                                           .symmetric(
@@ -197,7 +197,7 @@ class _EditProfState extends State<EditProf> {
                                                                   const EdgeInsets
                                                                       .all(8.0),
                                                               child: Text(
-                                                                '$filename',
+                                                                filename,
                                                                 style: const TextStyle(
                                                                     fontSize:
                                                                         10,
@@ -258,9 +258,6 @@ class _EditProfState extends State<EditProf> {
                                             ),
                                           ],
                                         ),
-                                        // const SizedBox(
-                                        //   height: 50,
-                                        // )
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,

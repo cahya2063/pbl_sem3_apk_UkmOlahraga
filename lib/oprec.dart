@@ -7,15 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pblukm/form/oprecform2.dart';
-import 'package:pblukm/form/registerform.dart';
 import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/oprec.dart';
 import 'package:http/http.dart' as http;
 import 'package:pblukm/models/divisimodel.dart';
 
 class Oprec extends StatefulWidget {
-  // final Function(oprecmodel) addOprec;
-  // const Oprec(this.addOprec, {super.key});
   const Oprec({super.key});
 
   @override
@@ -23,7 +20,7 @@ class Oprec extends StatefulWidget {
 }
 
 class _OprecState extends State<Oprec> {
-  late List<oprecmodel> data = [];
+  //late List<oprecmodel> data = [];
   late List<modelDiv> divisi = []; //list untuk tampung data API tabel divisi
   bool isCvUpload = false;
 
@@ -34,11 +31,12 @@ class _OprecState extends State<Oprec> {
     final response =
         await http.get(Uri.parse('http://10.0.2.2:8000/api/divisi/view'));
     if (response.statusCode == 200) {
+      
       List<dynamic> responseBody = jsonDecode(response.body);
 
       List<dynamic> divisiList = responseBody[0];
 
-      // Mengonversi setiap item dalam daftar menjadi objek modelDiv
+      // Mengonversi setiap item dalam divisiList menjadi objek modelDiv
       List<modelDiv> divisis =
           divisiList.map((item) => modelDiv.fromJson(item)).toList();
 
@@ -49,25 +47,6 @@ class _OprecState extends State<Oprec> {
     }
   }
 
-  // Future<List<oprecmodel>> fetchData() async {
-  //   final response =
-  //       await http.get(Uri.parse('http://10.0.2.2:8000/api/pendaftaran/view'));
-  //   if (response.statusCode == 200) {
-  //     // Map<String, dynamic> responseBody = json.decode(response.body);
-  //     // List<dynamic> divisiList = responseBody['data'];
-
-  //     List<dynamic> responseBody = json.decode(response.body);
-  //     List<dynamic> divisiList = responseBody.elementAt(0);
-
-  //     List<oprecmodel> oprec =
-  //         divisiList.map((item) => oprecmodel.fromjson(item)).toList();
-
-  //     return oprec;
-  //   } else {
-  //     throw "Failed to load data: ${response.statusCode}";
-  //   }
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -77,7 +56,8 @@ class _OprecState extends State<Oprec> {
         divisi = value;
       });
     });
-
+    newoprec.prodiController.text = formloginState.prodiLogin;
+    newoprec.semesterController.text = selectsemester;
     newoprec.divisi_1Controller.text = selctdiv1;
   }
 
@@ -129,8 +109,6 @@ class _OprecState extends State<Oprec> {
 
   @override
   Widget build(BuildContext context) {
-    newoprec.prodiController.text = selectjr;
-    newoprec.semesterController.text = selectsemester;
     return WillPopScope(
       onWillPop: () async {
         kembali();
@@ -207,7 +185,7 @@ class _OprecState extends State<Oprec> {
                                             const EdgeInsets.symmetric(
                                                 vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: '${formloginState.email}',
+                                        hintText: '${formloginState.emailLogin}',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -254,7 +232,7 @@ class _OprecState extends State<Oprec> {
                                             const EdgeInsets.symmetric(
                                                 vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: '${formloginState.nama}',
+                                        hintText: '${formloginState.namaLogin}',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -305,7 +283,7 @@ class _OprecState extends State<Oprec> {
                                             const EdgeInsets.symmetric(
                                                 vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: '${formloginState.nim}',
+                                        hintText: '${formloginState.nimLogin}',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -336,6 +314,7 @@ class _OprecState extends State<Oprec> {
                             style: TextStyle(
                                 fontFamily: 'PoppinsBold', fontSize: 15),
                           ),
+                          //text jurusan
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
@@ -345,18 +324,15 @@ class _OprecState extends State<Oprec> {
                                     height: 50,
                                     child: TextField(
                                       readOnly: true,
-                                      controller: newoprec.nimController,
+                                      controller: newoprec.prodiController,
                                       // onSubmitted: (_) => newoprec.daftar(),
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
+
                                       decoration: InputDecoration(
                                         contentPadding:
                                             const EdgeInsets.symmetric(
                                                 vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: '${formloginState.prodi}',
+                                        //hintText: 'dasd',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -437,7 +413,7 @@ class _OprecState extends State<Oprec> {
                             style: TextStyle(
                                 fontFamily: 'PoppinsBold', fontSize: 15),
                           ),
-                          // text nama
+                          // text semester
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: DropdownButtonFormField<String>(
@@ -507,7 +483,7 @@ class _OprecState extends State<Oprec> {
                                                   padding:
                                                       const EdgeInsets.all(8.0),
                                                   child: Text(
-                                                    '$filename',
+                                                    filename,
                                                     style: const TextStyle(
                                                         fontSize: 10,
                                                         overflow: TextOverflow
@@ -696,6 +672,9 @@ class _OprecState extends State<Oprec> {
                                           },
                                         );
                                       } else {
+                                        print(newoprec.namaController);
+                                        print(newoprec.nimController);
+                                        print(newoprec.prodiController);
                                         oprecmodel dataBaru =
                                             newoprec.convertToModel();
                                         _addPerson(dataBaru);

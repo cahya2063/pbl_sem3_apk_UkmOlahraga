@@ -47,7 +47,7 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 10),
                         child: Text(
-                          '${formloginState.nama}',
+                          '${formloginState.namaLogin}',
                           style: TextStyle(
                               fontFamily: 'PoppinsBold', fontSize: 30),
                         ),
@@ -122,7 +122,7 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${formloginState.nim}',
+                                    '${formloginState.nimLogin}',
                                     style: TextStyle(fontSize: 15),
                                   ),
                                   const Text(
@@ -132,7 +132,7 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${formloginState.email}',
+                                    '${formloginState.emailLogin}',
                                     style: TextStyle(fontSize: 15),
                                   ),
                                   const Text(
@@ -142,7 +142,7 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${formloginState.prodi}',
+                                    '${formloginState.prodiLogin}',
                                     style: TextStyle(fontSize: 15),
                                   ),
                                 ],

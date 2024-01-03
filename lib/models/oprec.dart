@@ -1,6 +1,4 @@
-import 'dart:ffi';
-import 'dart:io';
-import 'package:flutter/material.dart';
+
 
 class oprecmodel {
   int? id;

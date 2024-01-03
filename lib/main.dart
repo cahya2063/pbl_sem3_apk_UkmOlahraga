@@ -3,7 +3,7 @@ import 'package:pblukm/fiturdiv.dart';
 import 'package:pblukm/login.dart';
 
 void main(List<String> args) {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -13,17 +13,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        '/futsal':(context) => Futsal(),
-        '/basket':(context) => Basket(),
-        '/badminthon':(context) => Badminthon(),
-        '/tarungderajat':(context) => Tarungderajat(),
-        '/volly':(context) => Volly(),
-        '/silat':(context) => Silat(),
-        '/tenismeja':(context) => Tenismeja(),
-        '/karate':(context) => Karate(),
-        '/esport':(context) => E_sport(),
-        '/catur':(context) => Catur(),
-        '/taekwondo':(context) => Taekwondo(),
+        '/futsal':(context) =>const Futsal(),
+        '/basket':(context) =>const Basket(),
+        '/badminthon':(context) =>const Badminthon(),
+        '/tarungderajat':(context) =>const Tarungderajat(),
+        '/volly':(context) =>const Volly(),
+        '/silat':(context) =>const Silat(),
+        '/tenismeja':(context) =>const Tenismeja(),
+        '/karate':(context) =>const Karate(),
+        '/esport':(context) =>const E_sport(),
+        '/catur':(context) =>const Catur(),
+        '/taekwondo':(context) =>const Taekwondo(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Poppins'),
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         onWillPop: () async {
           return false;
         },
-        child: Scaffold(
+        child: const Scaffold(
           body: login(),
         ),
       ),

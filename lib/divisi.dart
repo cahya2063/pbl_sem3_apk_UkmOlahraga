@@ -43,7 +43,7 @@ class _DivisiState extends State<Divisi> {
     });
   }
 
-  final Map<int, String> fiturdiv = {
+  final Map<int, String> routeFiturDivisi = {
     0: '/futsal',
     1: '/basket',
     2: '/volly',
@@ -88,9 +88,9 @@ class _DivisiState extends State<Divisi> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  if (fiturdiv.containsKey(index)) {
+                                  if (routeFiturDivisi.containsKey(index)) {
                                     Navigator.pushNamed(
-                                        context, fiturdiv[index]!);
+                                        context, routeFiturDivisi[index]!);
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
