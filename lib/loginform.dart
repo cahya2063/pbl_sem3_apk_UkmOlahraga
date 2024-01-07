@@ -21,6 +21,7 @@ class formlogin extends StatefulWidget {
 class formloginState extends State<formlogin> {
   final textEmail = TextEditingController();
   final textPass = TextEditingController();
+  
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   static String? token;
@@ -70,7 +71,6 @@ class formloginState extends State<formlogin> {
     bool isValid = formKey.currentState!.validate();
     if (!isValid) {
       // Tampilkan pesan jika form tidak valid
-
       return;
     }
     // Ganti URL dengan URL endpoint login Anda

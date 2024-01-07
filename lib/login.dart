@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pblukm/loginform.dart';
 //import 'package:pblukm/navbar.dart';
 import 'package:pblukm/registrer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ignore: camel_case_types
 class login extends StatelessWidget {
@@ -172,7 +173,9 @@ class login extends StatelessWidget {
                                         backgroundColor: Colors.white,
                                         shadowColor: Colors.black,
                                         elevation: 10),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _bukaYoutube('https://www.youtube.com');
+                                    },
                                     child: Image.asset(
                                       'img/youtube.png',
                                       width: 50,
@@ -191,7 +194,9 @@ class login extends StatelessWidget {
                                         backgroundColor: Colors.white,
                                         shadowColor: Colors.black,
                                         elevation: 10),
-                                    onPressed: () {},
+                                    onPressed: (){
+                                      _bukaInstagram('https://www.instagram.com');
+                                    },
                                     child: Image.asset(
                                       'img/instagram.png',
                                       width: 50,
@@ -211,5 +216,21 @@ class login extends StatelessWidget {
         ),
       ),
     );
+  }
+  _bukaInstagram(String url)async{
+    if (await canLaunchUrl(Uri.parse(url))) {
+     await launchUrl(Uri.parse(url));
+    }
+    else{
+      throw 'tidak bisa buka url';
+    }
+  }
+  _bukaYoutube(String url)async{
+    if (await canLaunchUrl(Uri.parse(url))) {
+     await launchUrl(Uri.parse(url));
+    }
+    else{
+      throw 'tidak bisa buka url';
+    }
   }
 }

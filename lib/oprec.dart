@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pblukm/form/oprecform2.dart';
+import 'package:pblukm/home.dart';
 import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/oprec.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,7 @@ class Oprec extends StatefulWidget {
 }
 
 class _OprecState extends State<Oprec> {
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   //late List<oprecmodel> data = [];
   late List<modelDiv> divisi = []; //list untuk tampung data API tabel divisi
   bool isCvUpload = false;
@@ -31,7 +33,6 @@ class _OprecState extends State<Oprec> {
     final response =
         await http.get(Uri.parse('http://10.0.2.2:8000/api/divisi/view'));
     if (response.statusCode == 200) {
-      
       List<dynamic> responseBody = jsonDecode(response.body);
 
       List<dynamic> divisiList = responseBody[0];
@@ -62,12 +63,16 @@ class _OprecState extends State<Oprec> {
   }
 
   Future<void> _addPerson(oprecmodel person) async {
+    bool isValid = formKey.currentState!.validate();
     if (file == null) {
       print('Tidak ada gambar yang dipilih');
       return;
     }
 
     if (!isCvUpload) {
+      return;
+    }
+    if (!isValid) {
       return;
     }
     // Mengonversi gambar menjadi base64
@@ -86,6 +91,16 @@ class _OprecState extends State<Oprec> {
     if (response.statusCode == 200) {
       // Logika setelah pengunggahan berhasil
       print('Gambar berhasil diunggah.');
+      Navigator.push(
+          context, MaterialPageRoute(builder: ((context) => Home())));
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Berhasil daftar '),
+              content: Text('terus pantau notifikasimu!!'),
+            );
+          });
     } else {
       // Penanganan kesalahan jika pengunggahan gagal
       print('Gagal mengunggah gambar: ${response.statusCode}');
@@ -185,7 +200,8 @@ class _OprecState extends State<Oprec> {
                                             const EdgeInsets.symmetric(
                                                 vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: '${formloginState.emailLogin}',
+                                        hintText:
+                                            '${formloginState.emailLogin}',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -363,42 +379,44 @@ class _OprecState extends State<Oprec> {
                             style: TextStyle(
                                 fontFamily: 'PoppinsBold', fontSize: 15),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
+                          Form(
+                            key: formKey,
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: TextField(
-                                      controller: newoprec.no_telpController,
-                                      // onSubmitted: (_) => newoprec.daftar(),
-                                      keyboardType: TextInputType.phone,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 5, horizontal: 10),
-                                        filled: false,
-                                        hintText: 'Masukkan No Hp',
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            borderSide: const BorderSide(
-                                              color: Colors.blue,
-                                              width: 2.0,
-                                            )),
-                                        hintStyle: const TextStyle(
-                                            fontFamily: 'Poppins'),
-                                        border: OutlineInputBorder(
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'mana NoHpmu??';
+                                      }
+                                      return null;
+                                    },
+                                    controller: newoprec.no_telpController,
+                                    // onSubmitted: (_) => newoprec.daftar(),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 5, horizontal: 10),
+                                      filled: false,
+                                      hintText: 'Masukkan No Hp',
+                                      enabledBorder: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(15),
                                           borderSide: const BorderSide(
                                             color: Colors.blue,
                                             width: 2.0,
-                                          ),
+                                          )),
+                                      hintStyle: const TextStyle(
+                                          fontFamily: 'Poppins'),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                        borderSide: const BorderSide(
+                                          color: Colors.blue,
+                                          width: 2.0,
                                         ),
                                       ),
                                     ),
@@ -678,7 +696,6 @@ class _OprecState extends State<Oprec> {
                                         oprecmodel dataBaru =
                                             newoprec.convertToModel();
                                         _addPerson(dataBaru);
-                                        Navigator.pop(context);
                                       }
                                     },
                                     child: const Text(

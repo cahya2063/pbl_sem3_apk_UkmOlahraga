@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pblukm/loginform.dart';
 import 'package:http/http.dart' as http;
+import 'package:pblukm/profile.dart';
 
 class EditProf extends StatefulWidget {
   const EditProf({super.key});
@@ -265,7 +266,7 @@ class _EditProfState extends State<EditProf> {
                                             ElevatedButton(
                                                 onPressed: () {
                                                   editprof();
-                                                  Navigator.pop(context);
+                                                  Navigator.push(context, MaterialPageRoute(builder: ((context) => Profile())));
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                     shape:

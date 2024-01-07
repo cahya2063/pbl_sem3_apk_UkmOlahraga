@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:pblukm/form/borrowform.dart';
+import 'package:pblukm/form/pengembalianform.dart';
 //import 'package:pblukm/form/oprecform2.dart';
 import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/alatmodel.dart';
@@ -9,16 +10,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:pblukm/models/borrowmodel.dart';
-import 'package:pblukm/stok.dart';
+import 'package:pblukm/models/pengembalianmodel.dart';
 
-class Pinjamform extends StatefulWidget {
-  const Pinjamform({super.key});
+class Pengembalianform extends StatefulWidget {
+  const Pengembalianform({super.key});
 
   @override
-  State<Pinjamform> createState() => _PinjamformState();
+  State<Pengembalianform> createState() => _PengembalianformState();
 }
 
-class _PinjamformState extends State<Pinjamform> {
+class _PengembalianformState extends State<Pengembalianform> {
   late List<Modelalat> alat = [];
 
   Future<List<Modelalat>> fetchDataAlat() async {
@@ -45,26 +46,84 @@ class _PinjamformState extends State<Pinjamform> {
         alat = value;
       });
     });
-    newPinjam.alatController.text = selectalat;
+    newpengembalian.nama_barangController.text = selectalat;
+    newpengembalian.statusController.text = selectKondisi;
     //newPinjam.prodiController.text = formloginState.prodiLogin;
   }
 
-  Future<void> addPinjam(Modelborrow pinjam) async {
+  Future<void> addPengembalian(ModelPengembalian pengembalian) async {
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/pinjam/create'),
+      Uri.parse('http://10.0.2.2:8000/api/pengembalian/create'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
-      body: json.encode(pinjam.tojson()),
+      body: json.encode(pengembalian.tojson()),
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
+      String status = data['status'];
       String message = data['message'];
-      bool status = data['status'];
-      if (message == 'stok tidak mencukupi' && status == false) {
-        dialogfailed();
-      } else {
-        dialogsucces();
+      if (message == 'data peminjaman tidak ditemukan') {
+        if (mounted) {
+          setState(() {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(status),
+                  content: Text(message),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          });
+        }
+      } else if(message == 'jumlah barang yang dikembalikan tidak sesuai'){
+        if (mounted) {
+          setState(() {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(status),
+                  content: Text(message),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          });
+        }
+      }
+      else{
+        if (mounted) {
+          setState(() {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(status),
+                  content: Text(message),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          });
+        }
       }
       //Navigator.pop(context);
     } else {
@@ -72,7 +131,8 @@ class _PinjamformState extends State<Pinjamform> {
     }
   }
 
-  formPinjam newPinjam = formPinjam();
+  formPengembalian newpengembalian = formPengembalian();
+  //formPinjam newPinjam = formPinjam();
 
   //final _dateController = TextEditingController();
   List<String> jurusan = ['sipil', 'TRM', 'JBI', 'AGB', 'MBP'];
@@ -83,6 +143,7 @@ class _PinjamformState extends State<Pinjamform> {
 
   @override
   Widget build(BuildContext context) {
+    newpengembalian.nama_barangController.text = selectalat;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -103,7 +164,7 @@ class _PinjamformState extends State<Pinjamform> {
             const Padding(
               padding: EdgeInsets.only(top: 0, bottom: 40),
               child: Text(
-                'Form peminjaman',
+                'Form Pengembalian',
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -143,7 +204,7 @@ class _PinjamformState extends State<Pinjamform> {
                                   height: 50,
                                   child: TextField(
                                     readOnly: true,
-                                    controller: newPinjam.namaController,
+                                    controller: newpengembalian.namaController,
                                     decoration: InputDecoration(
                                       contentPadding:
                                           const EdgeInsets.symmetric(
@@ -188,7 +249,7 @@ class _PinjamformState extends State<Pinjamform> {
                                   height: 50,
                                   child: TextField(
                                     readOnly: true,
-                                    controller: newPinjam.nimController,
+                                    controller: newpengembalian.nimController,
                                     keyboardType: TextInputType.number,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly
@@ -238,7 +299,7 @@ class _PinjamformState extends State<Pinjamform> {
                                   height: 50,
                                   child: TextField(
                                     readOnly: true,
-                                    controller: newPinjam.prodiController,
+                                    controller: newpengembalian.prodiController,
                                     // onSubmitted: (_) => newoprec.daftar(),
 
                                     decoration: InputDecoration(
@@ -273,38 +334,17 @@ class _PinjamformState extends State<Pinjamform> {
                         //input prodi
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20),
-                          child: TextField(
-                            controller: newPinjam.dateController,
-                            decoration: const InputDecoration(
-                              hintText: 'Tanggal',
-                              filled: true,
-                              prefixIcon: Icon(Iconsax.calendar_add5),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blue),
-                              ),
-                            ),
-                            readOnly: true,
-                            onTap: () {
-                              _selectDate();
-                            },
-                          ),
-                        ),
-                        // input tanggal
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
                           child: DropdownButtonFormField<String>(
                             value: selectalat,
                             onChanged: (newvalue) {
                               setState(() {
                                 selectalat = newvalue!;
-                                newPinjam.alatController.text = selectalat;
+                                newpengembalian.nama_barangController.text =
+                                    selectalat;
                               });
                             },
                             decoration: InputDecoration(
-                              labelText: 'pinjam apa?',
+                              labelText: 'kembalikan apa?',
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
                                   borderSide: const BorderSide(
@@ -333,7 +373,7 @@ class _PinjamformState extends State<Pinjamform> {
                         ),
                         //dropdown alat
                         const Text(
-                          'total peminjaman',
+                          'total pengembalian',
                           style: TextStyle(
                               fontFamily: 'PoppinsBold', fontSize: 15),
                         ),
@@ -345,7 +385,8 @@ class _PinjamformState extends State<Pinjamform> {
                                 child: SizedBox(
                                   height: 50,
                                   child: TextFormField(
-                                    controller: newPinjam.jumlahController,
+                                    controller:
+                                        newpengembalian.jml_barangController,
                                     keyboardType: TextInputType.number,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.digitsOnly
@@ -355,7 +396,7 @@ class _PinjamformState extends State<Pinjamform> {
                                           const EdgeInsets.symmetric(
                                               vertical: 5, horizontal: 10),
                                       filled: false,
-                                      hintText: 'pinjam berapa?',
+                                      hintText: 'kembalikan berapa?',
                                       enabledBorder: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(15),
@@ -381,6 +422,90 @@ class _PinjamformState extends State<Pinjamform> {
                         ),
                         //input total peminjaman
                         Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: TextField(
+                            controller: newpengembalian.tggl_pinjamController,
+                            decoration: const InputDecoration(
+                              hintText: 'Tanggal Pinjam',
+                              filled: true,
+                              prefixIcon: Icon(Iconsax.calendar_add5),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                            ),
+                            readOnly: true,
+                            onTap: () {
+                              _selectDatePinjam();
+                            },
+                          ),
+                        ),
+                        // input tanggal pinjam
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: TextField(
+                            controller: newpengembalian.tggl_kembaliController,
+                            decoration: const InputDecoration(
+                              hintText: 'Tanggal Kembali',
+                              filled: true,
+                              prefixIcon: Icon(Iconsax.calendar_add5),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                            ),
+                            readOnly: true,
+                            onTap: () {
+                              _selectDatePengembalian();
+                            },
+                          ),
+                        ),
+                        // input tanggal kembali
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: DropdownButtonFormField<String>(
+                            value: selectKondisi,
+                            onChanged: (newvalue) {
+                              setState(() {
+                                selectKondisi = newvalue!;
+                                newpengembalian.statusController.text =
+                                    selectalat;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              labelText: 'kondisi alat',
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: const BorderSide(
+                                    width: 2.0,
+                                    color: Colors.blue,
+                                  )),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: const BorderSide(
+                                    color: Colors.blue,
+                                  )),
+                              labelStyle:
+                                  const TextStyle(fontFamily: 'Poppins'),
+                            ),
+                            items: kondisi
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style:
+                                        const TextStyle(fontFamily: 'Poppins'),
+                                  ));
+                            }).toList(),
+                          ),
+                        ),
+                        //dropdown alat
+                        Padding(
                           padding: const EdgeInsets.only(top: 15),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -397,16 +522,20 @@ class _PinjamformState extends State<Pinjamform> {
                                         const Color.fromARGB(255, 13, 41, 183),
                                   ),
                                   onPressed: () {
-                                    print(newPinjam.namaController);
-                                    print(newPinjam.nimController);
-                                    print(newPinjam.prodiController);
-                                    print(newPinjam.alatController);
-                                    print(newPinjam.dateController);
-                                    print(newPinjam.jumlahController);
-                                    //addPinjam(pinjam)
-                                    Modelborrow pinjamBaru =
-                                        newPinjam.convertToModel();
-                                    addPinjam(pinjamBaru);
+                                    print(newpengembalian.namaController);
+                                    print(newpengembalian.nimController);
+                                    print(newpengembalian.prodiController);
+                                    print(
+                                        newpengembalian.nama_barangController);
+                                    print(newpengembalian.jml_barangController);
+                                    print(
+                                        newpengembalian.tggl_pinjamController);
+                                    print(
+                                        newpengembalian.tggl_kembaliController);
+                                    print(newpengembalian.statusController);
+                                    ModelPengembalian pengembalianbaru =
+                                        newpengembalian.convertToModel();
+                                    addPengembalian(pengembalianbaru);
                                     //Navigator.pop(context);
                                   },
                                   child: const Text(
@@ -435,7 +564,7 @@ class _PinjamformState extends State<Pinjamform> {
     );
   }
 
-  Future<void> _selectDate() async {
+  Future<void> _selectDatePinjam() async {
     DateTime? _picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -443,57 +572,23 @@ class _PinjamformState extends State<Pinjamform> {
         lastDate: DateTime(2100));
     if (_picked != null) {
       setState(() {
-        newPinjam.dateController.text = _picked.toString().split(" ")[0];
+        newpengembalian.tggl_pinjamController.text =
+            _picked.toString().split(" ")[0];
       });
     }
   }
 
-  void dialogfailed() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Peminjaman gagal'),
-          content: Text('stok tidak mencukupi'),
-          actions: [
-            TextButton(
-              onPressed: () {
-
-                  Navigator.pop(context);
-                
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  
-}
-
-void dialogsucces() {
-
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          
-          title: Text('Peminjaman berhasil'),
-          content: Text('silahkan ambil barang di sekret'),
-          actions: [
-            TextButton(
-              onPressed: () {
-
-                  Navigator.pop(context);
-                
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  
-}
+  Future<void> _selectDatePengembalian() async {
+    DateTime? _picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(200),
+        lastDate: DateTime(2100));
+    if (_picked != null) {
+      setState(() {
+        newpengembalian.tggl_kembaliController.text =
+            _picked.toString().split(" ")[0];
+      });
+    }
+  }
 }

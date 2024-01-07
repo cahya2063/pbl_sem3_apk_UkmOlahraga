@@ -46,7 +46,6 @@ class _StokState extends State<Stok> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {});
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
