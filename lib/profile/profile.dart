@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/editprof.dart';
-import 'package:pblukm/login.dart';
-import 'package:pblukm/loginform.dart';
+import 'package:pblukm/profile/editprof.dart';
+import 'package:pblukm/auth/login.dart';
+import 'package:pblukm/auth/loginform.dart';
+import 'package:pblukm/models/usermodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -12,6 +16,25 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  late User userLogin;
+  Future<void> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    User userLogin2 =
+        User.fromjson2(json.decode(prefs.getString("UserLoginInfo")!));
+    setState(() {
+      userLogin = userLogin2;
+      // print(userLogin.statuspendaftar);
+      // print(userLogin.isAnggota);
+      //print(recruitment);
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getSharedPrefs();
+  }
   // variabel untuk model nya
 
   // fetch data by id (via api) atau diupdate berdasarkan value dari shared preference
@@ -21,7 +44,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {});
+    //setState(() {});
     return Scaffold(
       body: Column(
         children: [
@@ -47,7 +70,7 @@ class _ProfileState extends State<Profile> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 10),
                         child: Text(
-                          '${formloginState.namaLogin}',
+                          '${userLogin.namaLogin}',
                           style: TextStyle(
                               fontFamily: 'PoppinsBold', fontSize: 30),
                         ),
@@ -55,11 +78,17 @@ class _ProfileState extends State<Profile> {
                       SizedBox(
                         width: 180,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                          final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: ((context) => EditProf())));
+                                    if (result != userLogin.emailLogin) {
+                                      setState(() {
+                                        userLogin.emailLogin = result;
+                                      });
+                                      
+                                    }
                           },
                           icon: const Icon(Iconsax.edit),
                           label: const Text('Edit Profil'),
@@ -122,7 +151,7 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${formloginState.nimLogin}',
+                                    '${userLogin.nimLogin}',
                                     style: TextStyle(fontSize: 15),
                                   ),
                                   const Text(
@@ -132,7 +161,7 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${formloginState.emailLogin}',
+                                    '${userLogin.emailLogin}',
                                     style: TextStyle(fontSize: 15),
                                   ),
                                   const Text(
@@ -142,7 +171,7 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${formloginState.prodiLogin}',
+                                    '${userLogin.prodiLogin}',
                                     style: TextStyle(fontSize: 15),
                                   ),
                                 ],
@@ -196,11 +225,14 @@ class _ProfileState extends State<Profile> {
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10))),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const login()));
+                                onPressed: () async{
+                                  SharedPreferences  prefs = await SharedPreferences.getInstance();
+                                  prefs.remove("UserLoginInfo");
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>login()));
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => const login()));
                                 },
                                 child: const Text(
                                   'Log out',

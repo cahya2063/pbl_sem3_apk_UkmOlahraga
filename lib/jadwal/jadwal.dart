@@ -79,22 +79,26 @@ class _JadwalState extends State<Jadwal> {
   void initState() {
     super.initState();
     fetchDatadivisi().then((value) {
-      setState(() {
-        divisi = value;
-      });
+      if (mounted) {
+        setState(() {
+          divisi = value;
+        });
+      }
     });
     super.initState();
     fetchDatajadwal().then((value) {
-      setState(() {
-        jadwal = value;
-      });
+      if (mounted) {
+        setState(() {
+          jadwal = value;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    fetchDatadivisi();
-    fetchDatajadwal();
+    // fetchDatadivisi();
+    // fetchDatajadwal();
 
     // List<dynamic> contoh = [];
     // divisi.forEach((mapItem) {
@@ -128,14 +132,14 @@ class _JadwalState extends State<Jadwal> {
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                         padding:
-                            const EdgeInsets.only(left: 30, right: 30, top: 20),
+                            const EdgeInsets.only(left: 30, right: 30, top: 10),
                         child: Row(
                           children: [
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Container(
-                                  height: 130,
+                                  height: 100,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       image: const DecorationImage(

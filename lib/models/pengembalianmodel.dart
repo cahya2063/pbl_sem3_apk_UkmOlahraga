@@ -1,4 +1,5 @@
 class ModelPengembalian{
+  //int id;
   String nama;
   String nim;
   String prodi;
@@ -6,10 +7,11 @@ class ModelPengembalian{
   int jml_barang;
   String tggl_pinjam;
   String tggl_kembali;
-  String status;
-  String? image;
+  String deskripsi;
+  String? bukti;
 
   ModelPengembalian({
+    //required this.id,
     required this.nama,
     required this.nim,
     required this.prodi,
@@ -17,11 +19,12 @@ class ModelPengembalian{
     required this.jml_barang,
     required this.tggl_pinjam,
     required this.tggl_kembali,
-    required this.status,
-    this.image,
+    required this.deskripsi,
+    this.bukti,
   });
   factory ModelPengembalian.fromJson(Map <String, dynamic> json){
     return ModelPengembalian(
+     // id: json['id'] as int,
       nama: json['nama'] as String, 
       nim: json['nim'] as String, 
       prodi: json['prodi'] as String, 
@@ -29,12 +32,13 @@ class ModelPengembalian{
       jml_barang: json['jml_barang'] as int, 
       tggl_pinjam: json['tggl_pinjam'] as String, 
       tggl_kembali: json['tggl_kembali'] as String, 
-      status: json['status'] as String, 
-      image: json['image'] as String,
+      deskripsi: json['deskripsi'] as String, 
+      bukti: json['bukti'] as String,
       );
   }
   Map <String, dynamic> tojson(){
     final Map <String, dynamic> data = <String,dynamic> {};
+    //data['id'] = id;
     data['nama'] = nama;
     data['nim'] = nim;
     data['prodi'] = prodi;
@@ -42,8 +46,8 @@ class ModelPengembalian{
     data['jml_barang'] = jml_barang;
     data['tggl_pinjam'] = tggl_pinjam;
     data['tggl_kembali'] = tggl_kembali;
-    data['status'] = status;
-    data['image'] = image;
+    data['deskripsi'] = deskripsi;
+    data['bukti'] = bukti;
     return data;
   }
 }

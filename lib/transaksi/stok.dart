@@ -6,7 +6,7 @@ import 'package:pblukm/models/alatmodel.dart';
 import 'package:http/http.dart' as http;
 //import 'package:pblukm/models/jadwalmodel.dart';
 //import 'package:pblukm/fiturdiv.dart';
-import 'package:pblukm/pinjamform.dart';
+import 'package:pblukm/transaksi/pinjamform.dart';
 
 class Stok extends StatefulWidget {
   const Stok({super.key});

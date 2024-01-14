@@ -4,10 +4,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:pblukm/models/usermodel.dart';
 //import 'package:pblukm/models/oprec.dart';
 //import 'package:pblukm/home.dart';
-import 'package:pblukm/navbar.dart';
+import 'package:pblukm/home/navbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: camel_case_types
 class formlogin extends StatefulWidget {
@@ -21,47 +23,26 @@ class formlogin extends StatefulWidget {
 class formloginState extends State<formlogin> {
   final textEmail = TextEditingController();
   final textPass = TextEditingController();
-  
+
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  static String? token;
-  static var namaLogin;
-  static var emailLogin;
-  static var nimLogin;
-  static var prodiLogin;
-  static int? iduserLogin;
+  
 
-  //static var nimPendaftar;
-  static var statuspendaftar = '';
-  static var isAnggota = '';
+  late User userLogin;
 // Bagian dari fungsi getStatusPendaftarByNIM
-  Future<void> getStatusPendaftarByNIM() async {
-    final response =
-        await http.get(Uri.parse('http://10.0.2.2:8000/api/pendaftaran/view'));
+  Future<void> getStatusPendaftarByNIM(String nim) async {
+    final response = await http
+        .get(Uri.parse('http://10.0.2.2:8000/api/pendaftaran/view/$nim'));
     if (response.statusCode == 200) {
       final data = json.decode(response.body); // Data adalah array luaran
-      final pendaftarData = data[0]; // Mengakses array dalam di indeks 0
+      var pendaftarData = data[0]; // Mengakses array dalam di indeks 0
 
-      bool terdaftar = false;
-      bool anggota = true;
-      // Anda dapat mengakses data pendaftaran seperti ini
-      for (var pendaftar in pendaftarData) {
-        // Menggunakan variabel 'pendaftar' untuk mengakses setiap objek data pendaftaran
+      if (pendaftarData != null) {
+        userLogin.statuspendaftar = pendaftarData['status'];
+        userLogin.isAnggota = pendaftarData['jabatan'];
+      }
 
-        var nimpendaf = pendaftar['nim'];
-        if (nimpendaf == nimLogin) {
-          statuspendaftar = pendaftar['status'];
-          isAnggota = pendaftar['jabatan'];
-          terdaftar = true;
-          anggota = true;
-        }
-      }
-      if (!terdaftar) {
-        statuspendaftar = 'kamu belum terdaftar';
-      }
-      if(!anggota){
-        isAnggota = 'kamu bukan anggota';
-      }
+      print('checkpoint');
     } else {
       throw "Failed to load data: ${response.statusCode}";
     }
@@ -87,26 +68,13 @@ class formloginState extends State<formlogin> {
       var data = jsonDecode(response.body);
 
       if (data['status'] == true && data['message'] == 'Login Berhasil') {
-        // Jika login berhasil, Anda dapat melakukan sesuatu di sini
-        var token1 = data['access_token']['plainTextToken'];
-        var nama1 = data['data']['name'];
-        var nim1 = data['data']['nim'];
-        var email1 = data['data']['email'];
-        var prodi1 = data['data']['prodi'];
-        var id1 = data['data']['id'];
-        // ignore: avoid_print
-        print('Login berhasil, access token: $token1');
-        // Navigasi ke halaman selanjutnya setelah berhasil login
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const navbar()));
-        namaLogin = nama1;
-        nimLogin = nim1;
-        emailLogin = email1;
-        prodiLogin = prodi1;
-        token = token1;
-        iduserLogin = id1;
-        await getStatusPendaftarByNIM();
+        userLogin = User.fromjson(data);
+
+        await getStatusPendaftarByNIM(userLogin.nimLogin);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("UserLoginInfo", json.encode(userLogin.tojson()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>navbar()));
+        // final SharedPreferences prefs = await SharedPreferences.getInstance();
       } else {
         // Jika login gagal, tampilkan pesan kesalahan
         // ignore: use_build_context_synchronously

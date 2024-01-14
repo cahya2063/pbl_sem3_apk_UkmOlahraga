@@ -2,15 +2,20 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/loginform.dart';
+import 'package:pblukm/transaksi/history.dart';
+//import 'package:pblukm/login.dart';
+//import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/beritamodel.dart';
-import 'package:pblukm/oprec.dart';
+import 'package:pblukm/models/usermodel.dart';
+import 'package:pblukm/pendaftaran/oprec.dart';
 //import 'package:pblukm/pinjamform.dart';
 //import 'package:pblukm/stok.dart';
 import 'package:http/http.dart' as http;
-import 'package:pblukm/pengembalian.dart';
-import 'package:pblukm/stok.dart';
+import 'package:pblukm/transaksi/pengembalian.dart';
+import 'package:pblukm/transaksi/stok.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,49 +25,95 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late User userLogin;
+  Future<void> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    User userLogin2 =
+        User.fromjson2(json.decode(prefs.getString("UserLoginInfo")!));
+    //if (mounted) {
+    setState(() {
+      userLogin = userLogin2;
+      print(userLogin.statuspendaftar);
+      print(userLogin.isAnggota);
+      print(userLogin.iduserLogin);
+      print('halaman home');
+      //runApp(MaterialApp(home: userLogin.emailLogin == null ? login() : Home(),));
+      //print(recruitment);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getSharedPrefs();
+
     _getdataFormAPI();
   }
 
+  // late User userLogin;
   List<dynamic> articles1 = [];
   // dynamic status = formloginState.statuspendaftar;
-  bool recruitment = true;
+  bool recruitment = false;
   bool isPinjam = true;
-  String popPinjam = '';
+  String subtitle = '';
   @override
   Widget build(BuildContext context) {
     //setState(() {});
-    if (formloginState.statuspendaftar.contains('terima')) {
+    // if (formloginState.statuspendaftar.contains('terima')) {
+    //   recruitment = false;
+    //   popPinjam = 'terus aktif yaa!';
+    // } else if (userLogin.statuspendaftar == "menunggu") {
+    //   recruitment = false;
+    //   popPinjam = 'tunggu ACC dari kami ya!';
+    // } else if (formloginState.statuspendaftar.contains('tolak')) {
+    //   recruitment = false;
+    //   popPinjam = 'maaf nihh tapi kamu bukan anggota';
+    // } else if (formloginState.statuspendaftar.contains('kamu belum daftar')) {
+    //   recruitment = true;
+    //   popPinjam = 'ayo daftar jadi anggota kami...';
+    // }
+
+    // if (formloginState.isAnggota.contains('Anggota') &&
+    //     formloginState.statuspendaftar.contains('terima')) {
+    //   isPinjam = true;
+    // } else if (formloginState.isAnggota.contains('Anggota') &&
+    //     formloginState.statuspendaftar.contains('menunggu')) {
+    //   isPinjam = false;
+    //   popPinjam = 'tunggu ACC dari kami ya!';
+    // } else if (formloginState.isAnggota.contains('Anggota') &&
+    //     formloginState.statuspendaftar.contains('tolak')) {
+    //   isPinjam = false;
+    //   popPinjam = 'coba lagi tahun depan yaa..';
+    // } else {
+    //   isPinjam = false;
+    //   popPinjam = 'ayo daftar jadi anggota kami...';
+    // }
+
+    if (userLogin.statuspendaftar!.contains('menunggu')) {
       recruitment = false;
-      popPinjam = 'terus aktif yaa!';
-    } else if (formloginState.statuspendaftar.contains('menunggu')) {
-      recruitment = false;
-      popPinjam = 'tunggu ACC dari kami ya!';
-    } else if (formloginState.statuspendaftar.contains('tolak')) {
-      recruitment = false;
-      popPinjam = 'maaf nihh tapi kamu bukan anggota';
-    } else if (formloginState.statuspendaftar.contains('kamu belum daftar')) {
+      isPinjam = false;
+      subtitle = 'tunggu ACC dari kami ya!';
+    } else if (userLogin.statuspendaftar!.contains('kamu belum terdaftar')) {
       recruitment = true;
-      popPinjam = 'ayo daftar jadi anggota kami...';
+      isPinjam = false;
+      subtitle = 'ayo daftar jadi anggota kami...';
+    } else if (userLogin.statuspendaftar!.contains('terima')) {
+      recruitment = false;
+      isPinjam = true;
+      subtitle = 'terus aktif yaa!';
+    } else if (userLogin.statuspendaftar!.contains('tolak')) {
+      recruitment = false;
+      isPinjam = false;
+      subtitle = 'coba lagi tahun depan yaa..';
     }
 
-    if (formloginState.isAnggota.contains('Anggota')&& formloginState.statuspendaftar.contains('terima')) {
-      isPinjam = true;
-    }
-    else if(formloginState.isAnggota.contains('Anggota')&& formloginState.statuspendaftar.contains('menunggu')){
-      isPinjam = false;
-      popPinjam = 'tunggu ACC dari kami ya!';
-    }
-    else if(formloginState.isAnggota.contains('Anggota') && formloginState.statuspendaftar.contains('tolak')){
-      isPinjam = false;
-      popPinjam = 'coba lagi tahun depan yaa..';
-    }
-    else{
-      isPinjam = false;
-      popPinjam = 'ayo daftar jadi anggota kami...';
-    }
+    // if (userLogin.isAnggota == 'kamu bukan anggota') {
+    //   subtitle = 'ayo daftar jadi anggota kami...';
+    //   isPinjam = false;
+    // }
+    // else if(userLogin.isAnggota == 'anggota'){
+    //   isPinjam = true;
+    // }
 
     return Scaffold(
       body: Padding(
@@ -90,7 +141,7 @@ class _HomeState extends State<Home> {
                         ),
                         //teks welcome
                         Text(
-                          '${formloginState.namaLogin}',
+                          userLogin.namaLogin,
                           style: const TextStyle(
                               fontSize: 15, color: Colors.black),
                         ),
@@ -112,9 +163,8 @@ class _HomeState extends State<Home> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text(formloginState.statuspendaftar),
-                                content:
-                                     Text(popPinjam),
+                                title: Text(userLogin.statuspendaftar!),
+                                content: Text(subtitle),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
@@ -166,34 +216,41 @@ class _HomeState extends State<Home> {
                           child: SizedBox(
                             height: 100,
                             child: ElevatedButton(
-                              onPressed: () {
-                                recruitment == false
-                                    ? showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title:  Text(
-                                                formloginState.statuspendaftar),
-                                            content:  Text(
-                                                popPinjam),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('OK'),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      )
-                                    : Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const Oprec()));
+                              onPressed: () async {
+                                if (recruitment == false) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text(userLogin.statuspendaftar!),
+                                        content: Text(subtitle),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                  //print(recruitment);
+                                } else {
+                                  final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => const Oprec()));
+                                  if (result == "menunggu") {
+                                    setState(() {
+                                      userLogin.statuspendaftar = "menunggu";
+                                      userLogin.isAnggota = "anggota";
+                                    });
+                                  }
+                                }
                               },
                               style: ElevatedButton.styleFrom(
-                                  side: const BorderSide(color: Colors.blue),
+                                  side: const BorderSide(
+                                      color: Colors.blue, width: 2),
                                   backgroundColor: Colors.white,
                                   foregroundColor: Colors.deepPurple,
                                   elevation: 10,
@@ -204,7 +261,7 @@ class _HomeState extends State<Home> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Iconsax.strongbox_2,
+                                    Iconsax.user_add4,
                                     size: 50,
                                     color: Colors.green,
                                   ),
@@ -230,28 +287,28 @@ class _HomeState extends State<Home> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   isPinjam == false
-                                    ? showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text(
-                                                formloginState.statuspendaftar),
-                                            content:  Text(
-                                                popPinjam),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('OK'),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      )
-                                    :displaySheets(context);
+                                      ? showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                  userLogin.statuspendaftar!),
+                                              content: Text(subtitle),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        )
+                                      : displaySheets(context);
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    side: const BorderSide(color: Colors.blue),
+                                    side: const BorderSide(
+                                        color: Colors.blue, width: 2),
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.deepPurple,
                                     elevation: 10,
@@ -263,9 +320,9 @@ class _HomeState extends State<Home> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      Iconsax.folder_2,
+                                      Iconsax.wallet_add,
                                       size: 50,
-                                      color: Colors.yellow,
+                                      color: Color.fromARGB(255, 255, 231, 16),
                                     ),
                                     Text(
                                       'Alat',
@@ -349,9 +406,11 @@ class _HomeState extends State<Home> {
 
   Future<void> _getdataFormAPI() async {
     var api = await connectToApi();
-    setState(() {
-      articles1 = api;
-    });
+    if (mounted) {
+      setState(() {
+        articles1 = api;
+      });
+    }
   }
 
   _launchURL(String url) async {
@@ -415,7 +474,10 @@ Future displaySheets(BuildContext context) {
                       height: 60,
                       child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>Pengembalianform()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const history()));
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor:

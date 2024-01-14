@@ -1,14 +1,16 @@
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:pblukm/divisi.dart';
-import 'package:pblukm/home.dart';
+import 'package:pblukm/divisi/divisi.dart';
+//import 'package:pblukm/home.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/jadwal.dart';
-import 'package:pblukm/profile.dart';
+import 'package:pblukm/home/home.dart';
+import 'package:pblukm/jadwal/jadwal.dart';
+//import 'package:pblukm/models/usermodel.dart';
+import 'package:pblukm/profile/profile.dart';
 
 // ignore: camel_case_types
 class navbar extends StatefulWidget {
-  const navbar({super.key});
+ const navbar({super.key});
 
   @override
   State<navbar> createState() => _navbarState();
@@ -23,7 +25,7 @@ class _navbarState extends State<navbar> {
         onWillPop: () async {
           return false;
         },
-        child: const Home()),
+        child:const Home()),
     WillPopScope(
         onWillPop: () async {
           return false;
@@ -124,4 +126,3 @@ class _navbarState extends State<navbar> {
     );
   }
 }
-

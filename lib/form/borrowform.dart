@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pblukm/loginform.dart';
+//import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/borrowmodel.dart';
-import 'package:pblukm/models/oprec.dart';
+//import 'package:pblukm/models/oprec.dart';
 
 class formPinjam{
   
@@ -17,15 +17,15 @@ class formPinjam{
   Modelborrow convertToModel(){
     //String tanggal = dateController.text;
     
-    namaController.text = formloginState.namaLogin;
-    nimController.text = formloginState.nimLogin;
-    prodiController.text = formloginState.prodiLogin;
+    // namaController.text = formloginState.namaLogin;
+    // nimController.text = formloginState.nimLogin;
+    // prodiController.text = formloginState.prodiLogin;
     
     Modelborrow newborrow = Modelborrow(
-      nama: this.namaController.text, 
-      nim: this.nimController.text, 
-      prodi: this.prodiController.text, 
-      nama_barang: this.alatController.text, 
+      nama: namaController.text, 
+      nim: nimController.text, 
+      prodi: prodiController.text, 
+      nama_barang: alatController.text, 
       jml_barang: int.tryParse(jumlahController.text), 
       tggl_pinjam: dateController.text,
       

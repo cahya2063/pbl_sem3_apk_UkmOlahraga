@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pblukm/loginform.dart';
+import 'package:pblukm/auth/loginform.dart';
 //import 'package:pblukm/navbar.dart';
-import 'package:pblukm/registrer.dart';
+import 'package:pblukm/auth/registrer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // ignore: camel_case_types

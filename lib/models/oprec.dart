@@ -1,5 +1,3 @@
-
-
 class oprecmodel {
   int? id;
   String nama;
@@ -40,7 +38,7 @@ class oprecmodel {
         semester: json['semester'] as String,
         cv: json['cv'] as String,
         divisi_1: json['divisi_1'] as String,
-        divisi_2: json['divisi_2'] ,
+        divisi_2: json['divisi_2'],
         jabatan: json['jabatan'] as String,
         status: json['status'] as String);
   }

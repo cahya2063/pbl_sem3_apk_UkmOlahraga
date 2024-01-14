@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pblukm/form/oprecform2.dart';
-import 'package:pblukm/home.dart';
-import 'package:pblukm/loginform.dart';
+// import 'package:pblukm/home.dart';
+// import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/oprec.dart';
 import 'package:http/http.dart' as http;
 import 'package:pblukm/models/divisimodel.dart';
+import 'package:pblukm/models/usermodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Oprec extends StatefulWidget {
   const Oprec({super.key});
@@ -48,18 +50,34 @@ class _OprecState extends State<Oprec> {
     }
   }
 
+  Future<void> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    User userLogin2 =
+        User.fromjson2(json.decode(prefs.getString("UserLoginInfo")!));
+    setState(() {
+      userLogin = userLogin2;
+      newoprec.prodiController.text = userLogin!.prodiLogin;
+      newoprec.nimController.text = userLogin!.nimLogin;
+      newoprec.namaController.text = userLogin!.namaLogin;
+      newoprec.emailController.text = userLogin!.emailLogin;
+
+      newoprec.semesterController.text = selectsemester;
+      newoprec.divisi_1Controller.text = selctdiv1;
+      // print(userLogin.statuspendaftar!);
+    });
+  }
+
+  User? userLogin;
+
   @override
   void initState() {
     super.initState();
-
+    getSharedPrefs();
     fetchDatadivisi().then((value) {
       setState(() {
         divisi = value;
       });
     });
-    newoprec.prodiController.text = formloginState.prodiLogin;
-    newoprec.semesterController.text = selectsemester;
-    newoprec.divisi_1Controller.text = selctdiv1;
   }
 
   Future<void> _addPerson(oprecmodel person) async {
@@ -91,13 +109,14 @@ class _OprecState extends State<Oprec> {
     if (response.statusCode == 200) {
       // Logika setelah pengunggahan berhasil
       print('Gambar berhasil diunggah.');
-      Navigator.push(
-          context, MaterialPageRoute(builder: ((context) => Home())));
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: ((context) => Home())));
+      Navigator.pop(context, "menunggu");
       showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Berhasil daftar '),
+          builder:  (BuildContext context) {
+            return   AlertDialog(
+              title:  Text('Berhasil daftar '),
               content: Text('terus pantau notifikasimu!!'),
             );
           });
@@ -200,8 +219,7 @@ class _OprecState extends State<Oprec> {
                                             const EdgeInsets.symmetric(
                                                 vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText:
-                                            '${formloginState.emailLogin}',
+                                        hintText: userLogin!.emailLogin,
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -248,7 +266,7 @@ class _OprecState extends State<Oprec> {
                                             const EdgeInsets.symmetric(
                                                 vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: '${formloginState.namaLogin}',
+                                        hintText: '${userLogin!.namaLogin}',
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),
@@ -299,7 +317,7 @@ class _OprecState extends State<Oprec> {
                                             const EdgeInsets.symmetric(
                                                 vertical: 5, horizontal: 10),
                                         filled: false,
-                                        hintText: '${formloginState.nimLogin}',
+                                        hintText: userLogin!.nimLogin,
                                         enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(15),

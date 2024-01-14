@@ -37,9 +37,11 @@ class _DivisiState extends State<Divisi> {
   void initState() {
     super.initState();
     fetchDatadivisi().then((value) {
-      setState(() {
-        divisi = value;
-      });
+      if (mounted) {
+        setState(() {
+          divisi = value;
+        });
+      }
     });
   }
 
@@ -49,12 +51,18 @@ class _DivisiState extends State<Divisi> {
     2: '/volly',
     3: '/badminthon',
     4: '/karate',
-    5: '/silat'
+    5: '/silat',
+    6: '/catur',
+    7: '/tarungderajat',
+    8: '/esport',
+    9: '/tenismeja',
+    10: '/taekwondo',
+
   };
 
   @override
   Widget build(BuildContext context) {
-    fetchDatadivisi();
+    //fetchDatadivisi();
     return Scaffold(
       backgroundColor: const Color(0xFFDBEAFF),
       body: Center(

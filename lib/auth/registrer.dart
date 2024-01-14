@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/login.dart';
+import 'package:pblukm/auth/login.dart';
 //import 'package:pblukm/form/oprecform2.dart';
 import 'package:pblukm/models/Register.dart';
 import 'package:pblukm/form/registerform.dart';
@@ -54,12 +54,11 @@ class _RegisterState extends State<Register> {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
-
     if (response.statusCode == 200) {
       var jsonresponse = jsonDecode(response.body);
       var message = jsonresponse['message'];
       print('register berhasil : $jsonresponse');
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>login()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => login()));
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -80,7 +79,7 @@ class _RegisterState extends State<Register> {
 
   registerform newreg = registerform();
   bool obscuretext = true;
-  List<String> jurusan = ['sipil', 'TRM', 'JBI', 'AGB', 'MBP'];
+  List<String> jurusan = ['TRM', 'JBI', 'AGB', 'MBP', 'TPHT', 'sipil'];
   String selectjr = 'sipil';
   @override
   Widget build(BuildContext context) {

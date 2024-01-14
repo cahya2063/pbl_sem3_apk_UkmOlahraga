@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pblukm/loginform.dart';
+//import 'package:pblukm/loginform.dart';
 import 'package:pblukm/models/oprec.dart';
 
 class oprecform2 {
@@ -13,21 +13,20 @@ class oprecform2 {
   final divisi_2Controller = TextEditingController();
   final semesterController = TextEditingController();
 
-
   oprecmodel convertToModel() {
-    emailController.text = formloginState.emailLogin;
-    nimController.text = formloginState.nimLogin;
-    prodiController.text = formloginState.prodiLogin;
-    namaController.text = formloginState.namaLogin;
+    // emailController.text = formloginState.emailLogin;
+    // nimController.text = formloginState.nimLogin;
+    // prodiController.text = formloginState.prodiLogin;
+    // namaController.text = formloginState.namaLogin;
     oprecmodel newoprec = oprecmodel(
-      nama: this.namaController.text,
-      nim: this.nimController.text,
-      prodi: this.prodiController.text,
-      email: this.emailController.text,
-      no_telp: this.no_telpController.text,
-      semester: this.semesterController.text,
-      divisi_1: this.divisi_1Controller.text,
-      divisi_2: this.divisi_2Controller.text,
+      nama: namaController.text,
+      nim: nimController.text,
+      prodi: prodiController.text,
+      email: emailController.text,
+      no_telp: no_telpController.text,
+      semester: semesterController.text,
+      divisi_1: divisi_1Controller.text,
+      divisi_2: divisi_2Controller.text,
     );
 
     //  nama: "coba",
@@ -38,5 +37,4 @@ class oprecform2 {
     //     divisi_1: "badminton");
     return newoprec;
   }
-  
 }

@@ -1,15 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:pblukm/form/borrowform.dart';
+import 'package:pblukm/form/oprecform2.dart';
 //import 'package:pblukm/form/oprecform2.dart';
-import 'package:pblukm/loginform.dart';
+import 'package:pblukm/auth/loginform.dart';
 import 'package:pblukm/models/alatmodel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:pblukm/models/borrowmodel.dart';
-import 'package:pblukm/stok.dart';
+import 'package:pblukm/models/usermodel.dart';
+import 'package:pblukm/transaksi/stok.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Pinjamform extends StatefulWidget {
   const Pinjamform({super.key});
@@ -20,6 +25,25 @@ class Pinjamform extends StatefulWidget {
 
 class _PinjamformState extends State<Pinjamform> {
   late List<Modelalat> alat = [];
+  File? file;
+  String filename = '';
+  bool isCvUpload = false;
+  //oprecform2 newpinjam = oprecform2();
+  formPinjam newPinjam = formPinjam();
+  Future<void> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    User userLogin2 =
+        User.fromjson2(json.decode(prefs.getString("UserLoginInfo")!));
+    setState(() {
+      userLogin = userLogin2;
+      newPinjam.prodiController.text = userLogin!.prodiLogin;
+      newPinjam.nimController.text = userLogin!.nimLogin;
+      newPinjam.namaController.text = userLogin!.namaLogin;
+      //newpinjam.emailController.text = userLogin!.emailLogin;
+
+      // print(userLogin.statuspendaftar!);
+    });
+  }
 
   Future<List<Modelalat>> fetchDataAlat() async {
     var response =
@@ -37,9 +61,11 @@ class _PinjamformState extends State<Pinjamform> {
     }
   }
 
+  User? userLogin;
   @override
   void initState() {
     super.initState();
+    getSharedPrefs();
     fetchDataAlat().then((value) {
       setState(() {
         alat = value;
@@ -50,6 +76,16 @@ class _PinjamformState extends State<Pinjamform> {
   }
 
   Future<void> addPinjam(Modelborrow pinjam) async {
+    if (file == null) {
+      print('Tidak ada gambar yang dipilih');
+      return;
+    }
+
+    if (!isCvUpload) {
+      return;
+    }
+    String base64Image = base64Encode(file!.readAsBytesSync());
+    pinjam.bukti = base64Image;
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8000/api/pinjam/create'),
       headers: <String, String>{
@@ -58,21 +94,27 @@ class _PinjamformState extends State<Pinjamform> {
       body: json.encode(pinjam.tojson()),
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> data = json.decode(response.body);
-      String message = data['message'];
-      bool status = data['status'];
-      if (message == 'stok tidak mencukupi' && status == false) {
-        dialogfailed();
-      } else {
+      try {
+        Map<String, dynamic> data = json.decode(response.body);
+        String message = data['message'];
+        bool status = data['status'];
+        Navigator.pushNamed(context, '/stok');
+        if (message == 'stok tidak mencukupi' && status == false) {
+          dialogfailed();
+        } else {
+          dialogsucces();
+        }
+      } catch (e) {
+        print('Terjadi kesalahan saat decoding JSON: $e');
+        Navigator.pushNamed(context, '/stok');
         dialogsucces();
+        // Handle kesalahan sesuai kebutuhan Anda
       }
-      //Navigator.pop(context);
     } else {
+      print(response.body);
       throw "tidak bisa pinjam ${response.statusCode}";
     }
   }
-
-  formPinjam newPinjam = formPinjam();
 
   //final _dateController = TextEditingController();
   List<String> jurusan = ['sipil', 'TRM', 'JBI', 'AGB', 'MBP'];
@@ -149,7 +191,7 @@ class _PinjamformState extends State<Pinjamform> {
                                           const EdgeInsets.symmetric(
                                               vertical: 5, horizontal: 10),
                                       filled: false,
-                                      hintText: '${formloginState.namaLogin}',
+                                      hintText: userLogin!.namaLogin,
                                       enabledBorder: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(15),
@@ -180,7 +222,7 @@ class _PinjamformState extends State<Pinjamform> {
                               fontFamily: 'PoppinsBold', fontSize: 15),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 30),
+                          padding: const EdgeInsets.only(bottom: 10),
                           child: Row(
                             children: [
                               Expanded(
@@ -198,7 +240,7 @@ class _PinjamformState extends State<Pinjamform> {
                                           const EdgeInsets.symmetric(
                                               vertical: 5, horizontal: 10),
                                       filled: false,
-                                      hintText: '${formloginState.nimLogin}',
+                                      hintText: userLogin!.nimLogin,
                                       enabledBorder: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(15),
@@ -246,7 +288,7 @@ class _PinjamformState extends State<Pinjamform> {
                                           const EdgeInsets.symmetric(
                                               vertical: 5, horizontal: 10),
                                       filled: false,
-                                      hintText: '${formloginState.prodiLogin}',
+                                      hintText: userLogin!.prodiLogin,
                                       enabledBorder: OutlineInputBorder(
                                           borderRadius:
                                               BorderRadius.circular(15),
@@ -380,6 +422,80 @@ class _PinjamformState extends State<Pinjamform> {
                           ),
                         ),
                         //input total peminjaman
+                        const Text(
+                          'Foto alat',
+                          style: TextStyle(
+                              fontFamily: 'PoppinsBold', fontSize: 15),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Container(
+                                  height: 55,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                      color: Colors.blue,
+                                      width: 2.0,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      filename != null
+                                          ? Expanded(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  filename,
+                                                  style: const TextStyle(
+                                                      fontSize: 10,
+                                                      overflow: TextOverflow
+                                                          .ellipsis),
+                                                ),
+                                              ),
+                                            )
+                                          : const Padding(
+                                              padding: EdgeInsets.only(left: 5),
+                                              child: Text(
+                                                'gambar cv',
+                                                style: TextStyle(fontSize: 20),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 5),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            fromGallery();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 155, 187, 252),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'choose file',
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // input gambar
                         Padding(
                           padding: const EdgeInsets.only(top: 15),
                           child: Row(
@@ -397,6 +513,26 @@ class _PinjamformState extends State<Pinjamform> {
                                         const Color.fromARGB(255, 13, 41, 183),
                                   ),
                                   onPressed: () {
+                                    if (!isCvUpload) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Peringatan'),
+                                            content: const Text(
+                                                'Anda harus mengunggah CV terlebih dahulu.'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('OK'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
                                     print(newPinjam.namaController);
                                     print(newPinjam.nimController);
                                     print(newPinjam.prodiController);
@@ -435,6 +571,23 @@ class _PinjamformState extends State<Pinjamform> {
     );
   }
 
+  Future fromGallery() async {
+    // ignore: non_constant_identifier_names
+    final PickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery); //mengambil gambar dari source galeri
+
+    setState(() {
+      if (PickedFile != null) {
+        file = File(PickedFile.path); //mengambil gambar
+        filename = file!.path.split('/').last; //mengambil nama file dari path
+        isCvUpload = true;
+      } else {
+        'tidak ada gambar dipilih';
+      }
+    });
+  }
+  //untuk ambil gambar dari galeri
+
   Future<void> _selectDate() async {
     DateTime? _picked = await showDatePicker(
         context: context,
@@ -452,48 +605,33 @@ class _PinjamformState extends State<Pinjamform> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return const AlertDialog(
           title: Text('Peminjaman gagal'),
           content: Text('stok tidak mencukupi'),
-          actions: [
-            TextButton(
-              onPressed: () {
-
-                  Navigator.pop(context);
-                
-              },
-              child: const Text('OK'),
-            ),
-          ],
         );
       },
     );
-  
-}
+  }
 
-void dialogsucces() {
-
+  void dialogsucces() {
     showDialog(
-      barrierDismissible: false,
+      //barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          
+        return const AlertDialog(
           title: Text('Peminjaman berhasil'),
           content: Text('silahkan ambil barang di sekret'),
-          actions: [
-            TextButton(
-              onPressed: () {
-
-                  Navigator.pop(context);
-                
-              },
-              child: const Text('OK'),
-            ),
-          ],
+          // actions: [
+          //   TextButton(
+          //     onPressed: () {
+          //       Navigator.push(context, MaterialPageRoute(builder: (context)=>Stok()));
+          //       //Navigator.popUntil(context, ModalRoute.withName('/'));
+          //     },
+          //     child: const Text('OK'),
+          //   ),
+          // ],
         );
       },
     );
-  
-}
+  }
 }
