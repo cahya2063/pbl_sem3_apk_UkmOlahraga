@@ -9,6 +9,7 @@ import 'package:pblukm/models/usermodel.dart';
 //import 'package:pblukm/home.dart';
 import 'package:pblukm/home/navbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:pblukm/widget/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: camel_case_types
@@ -25,8 +26,6 @@ class formloginState extends State<formlogin> {
   final textPass = TextEditingController();
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  
 
   late User userLogin;
 // Bagian dari fungsi getStatusPendaftarByNIM
@@ -73,7 +72,8 @@ class formloginState extends State<formlogin> {
         await getStatusPendaftarByNIM(userLogin.nimLogin);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("UserLoginInfo", json.encode(userLogin.tojson()));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>navbar()));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => navbar()));
         // final SharedPreferences prefs = await SharedPreferences.getInstance();
       } else {
         // Jika login gagal, tampilkan pesan kesalahan
@@ -170,42 +170,15 @@ class formloginState extends State<formlogin> {
                             ),
                           ),
                           //teks continue to your account
-                          const Padding(
-                            padding: EdgeInsets.only(left: 30, top: 30),
-                            child: Text(
-                              'Email',
-                              style: TextStyle(
-                                  fontFamily: 'PoppinsBold', fontSize: 15),
-                            ),
-                          ),
-                          // text Email
                           Padding(
-                            padding: const EdgeInsets.only(
-                                right: 30, left: 30, bottom: 20, top: 0),
-                            child: TextFormField(
-                              controller: textEmail,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Mana emailmu?';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                filled: false,
-                                //fillColor: Color.fromARGB(104, 31, 65, 187),
-                                hintText: 'Masukkan Emailmu',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide:
-                                      const BorderSide(color: Colors.black),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      const BorderSide(color: Colors.black),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            ),
+                            padding: EdgeInsets.only(
+                                left: 30, top: 30, right: 30, bottom: 20),
+                            child: textFieldAuth(
+                                validasi: 'mana emailmu?',
+                                hinText: 'Masukkan Emailmu',
+                                controller: textEmail,
+                                judul: 'Email',
+                                tipe: TextInputType.emailAddress),
                           ),
                           //bagian input username
                           const Padding(
@@ -263,34 +236,7 @@ class formloginState extends State<formlogin> {
                                       right: 50, left: 50),
                                   child: SizedBox(
                                     height: 60,
-                                    child: ElevatedButton(
-                                        onPressed: () {
-                                          print(textEmail);
-                                          print(textPass);
-                                          // ketika diklik, nanti response dari api
-                                          // response nya berupa token / id user.
-                                          // atau berupa objek user
-                                          // objek tersebut bisa di simpan di shared preferense
-
-                                          //response status menunggu, kirim ke halaman tunggu
-                                          // klo diterima kasih ke home
-
-                                          loginUser();
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            shadowColor: const Color.fromARGB(
-                                                255, 13, 41, 183),
-                                            elevation: 10,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 13, 41, 183)),
-                                        child: const Text(
-                                          'Sign In',
-                                          style: TextStyle(fontSize: 22),
-                                        )),
+                                    child: button(text: 'Sign In', pressed: loginUser)
                                   ),
                                 ),
                               ),

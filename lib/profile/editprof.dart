@@ -297,11 +297,7 @@ class _EditProfState extends State<EditProf> {
                                             ElevatedButton(
                                                 onPressed: () {
                                                   editprof();
-                                                  // Navigator.push(
-                                                  //     context,
-                                                  //     MaterialPageRoute(
-                                                  //         builder: ((context) =>
-                                                  //             Profile())));
+                                                  
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                     shape:

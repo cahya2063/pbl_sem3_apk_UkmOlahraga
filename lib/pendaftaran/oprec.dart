@@ -13,6 +13,7 @@ import 'package:pblukm/models/oprec.dart';
 import 'package:http/http.dart' as http;
 import 'package:pblukm/models/divisimodel.dart';
 import 'package:pblukm/models/usermodel.dart';
+import 'package:pblukm/widget/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Oprec extends StatefulWidget {
@@ -114,9 +115,9 @@ class _OprecState extends State<Oprec> {
       Navigator.pop(context, "menunggu");
       showDialog(
           context: context,
-          builder:  (BuildContext context) {
-            return   AlertDialog(
-              title:  Text('Berhasil daftar '),
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Berhasil daftar '),
               content: Text('terus pantau notifikasimu!!'),
             );
           });
@@ -196,249 +197,112 @@ class _OprecState extends State<Oprec> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Email',
-                            style: TextStyle(
-                                fontFamily: 'PoppinsBold', fontSize: 15),
-                          ),
-                          //teks email
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: TextField(
-                                      readOnly: true,
+                                  child: textFieldPendaftaran(
+                                      valid: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Mana No Hpmu?';
+                                        }
+                                        return null;
+                                      },
                                       controller: newoprec.emailController,
-                                      // onSubmitted: (_) => newoprec.daftar(),
-                                      keyboardType: TextInputType.emailAddress,
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 5, horizontal: 10),
-                                        filled: false,
-                                        hintText: userLogin!.emailLogin,
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            borderSide: const BorderSide(
-                                              color: Colors.blue,
-                                              width: 2.0,
-                                            )),
-                                        hintStyle: const TextStyle(
-                                            fontFamily: 'Poppins'),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          borderSide: const BorderSide(
-                                            color: Colors.blue,
-                                            width: 2.0,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                      hinText: userLogin!.emailLogin,
+                                      tipe: TextInputType.text,
+                                      judul: 'Email',
+                                      read: true),
                                 ),
                               ],
                             ),
                           ),
                           //input email
-                          const Text(
-                            'Nama Lengkap',
-                            style: TextStyle(
-                                fontFamily: 'PoppinsBold', fontSize: 15),
-                          ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: TextField(
-                                      readOnly: true,
+                                  child: textFieldPendaftaran(
+                                      valid: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Mana No Hpmu?';
+                                        }
+                                        return null;
+                                      },
                                       controller: newoprec.namaController,
-                                      // onSubmitted: (_) => newoprec.daftar(),
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 5, horizontal: 10),
-                                        filled: false,
-                                        hintText: '${userLogin!.namaLogin}',
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            borderSide: const BorderSide(
-                                              color: Colors.blue,
-                                              width: 2.0,
-                                            )),
-                                        hintStyle: const TextStyle(
-                                            fontFamily: 'Poppins'),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          borderSide: const BorderSide(
-                                            color: Colors.blue,
-                                            width: 2.0,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                      hinText: userLogin!.namaLogin,
+                                      tipe: TextInputType.text,
+                                      judul: 'Nama Lengkap',
+                                      read: true),
                                 ),
                               ],
                             ),
                           ),
                           //nama lengkap
-                          const Text(
-                            'Nim',
-                            style: TextStyle(
-                                fontFamily: 'PoppinsBold', fontSize: 15),
-                          ),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: TextField(
-                                      readOnly: true,
-                                      controller: newoprec.nimController,
-                                      // onSubmitted: (_) => newoprec.daftar(),
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 5, horizontal: 10),
-                                        filled: false,
-                                        hintText: userLogin!.nimLogin,
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            borderSide: const BorderSide(
-                                              color: Colors.blue,
-                                              width: 2.0,
-                                            )),
-                                        hintStyle: const TextStyle(
-                                            fontFamily: 'Poppins'),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          borderSide: const BorderSide(
-                                            color: Colors.blue,
-                                            width: 2.0,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                  child: textFieldPendaftaran(
+                                    valid: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Mana No Hpmu?';
+                                      }
+                                      return null;
+                                    },
+                                    controller: newoprec.nimController,
+                                    hinText: userLogin!.nimLogin,
+                                    tipe: TextInputType.number,
+                                    judul: 'Nim',
+                                    read: true,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           //input NIM
-                          const Text(
-                            'Jurusan',
-                            style: TextStyle(
-                                fontFamily: 'PoppinsBold', fontSize: 15),
-                          ),
-                          //text jurusan
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: TextField(
-                                      readOnly: true,
+                                  child: textFieldPendaftaran(
+                                      valid: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Mana No Hpmu?';
+                                        }
+                                        return null;
+                                      },
                                       controller: newoprec.prodiController,
-                                      // onSubmitted: (_) => newoprec.daftar(),
-
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 5, horizontal: 10),
-                                        filled: false,
-                                        //hintText: 'dasd',
-                                        enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            borderSide: const BorderSide(
-                                              color: Colors.blue,
-                                              width: 2.0,
-                                            )),
-                                        hintStyle: const TextStyle(
-                                            fontFamily: 'Poppins'),
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          borderSide: const BorderSide(
-                                            color: Colors.blue,
-                                            width: 2.0,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                      hinText: userLogin!.prodiLogin,
+                                      tipe: TextInputType.text,
+                                      judul: 'Prodi',
+                                      read: true),
                                 ),
                               ],
                             ),
                           ),
                           //input prodi
-                          const Text(
-                            'No Hp',
-                            style: TextStyle(
-                                fontFamily: 'PoppinsBold', fontSize: 15),
-                          ),
                           Form(
                             key: formKey,
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: TextFormField(
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'mana NoHpmu??';
-                                      }
-                                      return null;
-                                    },
-                                    controller: newoprec.no_telpController,
-                                    // onSubmitted: (_) => newoprec.daftar(),
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 5, horizontal: 10),
-                                      filled: false,
-                                      hintText: 'Masukkan No Hp',
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          borderSide: const BorderSide(
-                                            color: Colors.blue,
-                                            width: 2.0,
-                                          )),
-                                      hintStyle: const TextStyle(
-                                          fontFamily: 'Poppins'),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                        borderSide: const BorderSide(
-                                          color: Colors.blue,
-                                          width: 2.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  child: textFieldPendaftaran(
+                                      controller: newoprec.no_telpController,
+                                      hinText: 'Masukkan No Hp',
+                                      tipe: TextInputType.number,
+                                      judul: 'No Hp',
+                                      valid: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Mana No Hpmu?';
+                                        }
+                                        return null;
+                                      },
+                                      read: false),
                                 ),
                               ],
                             ),
@@ -670,7 +534,6 @@ class _OprecState extends State<Oprec> {
                             ],
                           ),
                           //dropdown div 2
-
                           Padding(
                             padding: const EdgeInsets.only(top: 15),
                             child: Row(

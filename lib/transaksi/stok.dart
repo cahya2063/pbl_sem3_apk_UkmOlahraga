@@ -17,7 +17,9 @@ class Stok extends StatefulWidget {
 
 class _StokState extends State<Stok> {
   late List<Modelalat> alat = [];
+  late List<Modelalat> originalAlat = [];
 
+  TextEditingController searchController = TextEditingController();
   Future<List<Modelalat>> fetchDataAlat() async {
     var response =
         await http.get(Uri.parse('http://10.0.2.2:8000/api/stok/alat'));
@@ -40,6 +42,7 @@ class _StokState extends State<Stok> {
     fetchDataAlat().then((value) {
       setState(() {
         alat = value;
+        originalAlat = List.from(alat);
       });
     });
   }
@@ -48,7 +51,7 @@ class _StokState extends State<Stok> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent, 
         elevation: 0,
         leading: IconButton(
             onPressed: () {
@@ -112,11 +115,16 @@ class _StokState extends State<Stok> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        const Padding(
-                                          padding: EdgeInsets.only(
+                                        Padding(
+                                          padding: const EdgeInsets.only(
                                               left: 0, right: 50),
                                           child: TextField(
-                                            decoration: InputDecoration(
+                                            controller: searchController,
+                                            onChanged: (value) {
+                                              // Panggil fungsi filter setiap kali isi TextField berubah
+                                              filterAlat(value);
+                                            },
+                                            decoration: const InputDecoration(
                                               contentPadding:
                                                   EdgeInsets.symmetric(
                                                       vertical: 10,
@@ -293,5 +301,17 @@ class _StokState extends State<Stok> {
         ),
       ),
     );
+  }
+
+  void filterAlat(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        alat = List.from(originalAlat);
+      } else {
+        alat = alat.where((model) {
+          return model.nama.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
   }
 }

@@ -10,6 +10,7 @@ import 'package:pblukm/auth/login.dart';
 import 'package:pblukm/models/Register.dart';
 import 'package:pblukm/form/registerform.dart';
 import 'package:http/http.dart' as http;
+import 'package:pblukm/widget/widget.dart';
 
 // ignore: camel_case_types
 class Register extends StatefulWidget {
@@ -57,20 +58,38 @@ class _RegisterState extends State<Register> {
     if (response.statusCode == 200) {
       var jsonresponse = jsonDecode(response.body);
       var message = jsonresponse['message'];
-      print('register berhasil : $jsonresponse');
-      Navigator.push(context, MaterialPageRoute(builder: (context) => login()));
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(message),
-              content: Text('Login yukk!!'),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(context), child: Text('OK')),
-              ],
-            );
-          });
+      print('status pendaftar : $jsonresponse');
+      if (jsonresponse['status'] == true) {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(message),
+                content: Text('Login yukk!!'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('OK')),
+                ],
+              );
+            });
+      } else {
+        //Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(message),
+                //content: Text('Login yukk!!'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('OK')),
+                ],
+              );
+            });
+      }
     } else {
       print(response.body);
       throw "Failed to add data ${response.statusCode}";
@@ -147,92 +166,27 @@ class _RegisterState extends State<Register> {
                             ),
                           ),
                         ),
-                        //teks continue to your account
-                        const Padding(
-                          padding: EdgeInsets.only(left: 30, top: 30),
-                          child: Text(
-                            'Nama',
-                            style: TextStyle(
-                                fontFamily: 'PoppinsBold', fontSize: 15),
-                          ),
-                        ),
-                        // text nama
                         Padding(
                           padding: const EdgeInsets.only(
                               right: 30, left: 30, bottom: 20, top: 0),
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'siapa namamu?';
-                              }
-                              return null;
-                            },
+                          child: textFieldAuth(
+                            validasi: 'siapa namamu?',
+                            hinText: 'Masukkan Nama',
                             controller: newreg.textName,
-                            decoration: InputDecoration(
-                              filled: false,
-                              //fillColor: Color.fromARGB(104, 31, 65, 187),
-                              hintText: 'Masukkan Nama',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide:
-                                    const BorderSide(color: Colors.black),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
+                            judul: 'nama',
+                            tipe: TextInputType.text,
                           ),
                         ),
                         //bagian input username
-                        const Padding(
-                          padding: EdgeInsets.only(left: 30, top: 0),
-                          child: Text(
-                            'Nim',
-                            style: TextStyle(
-                                fontFamily: 'PoppinsBold', fontSize: 15),
-                          ),
-                        ),
-                        // text nim
                         Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 30, right: 30, left: 30),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'mana nimmu?';
-                                    }
-                                    return null;
-                                  },
-                                  controller: newreg.textNim,
-                                  // onSubmitted: (_) => newoprec.daftar(),
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  decoration: InputDecoration(
-                                    filled: false,
-                                    //fillColor: Color.fromARGB(104, 31, 65, 187),
-                                    hintText: 'Masukkan Nim',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      borderSide:
-                                          const BorderSide(color: Colors.black),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          const BorderSide(color: Colors.black),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          padding: EdgeInsets.only(
+                              left: 30, top: 0, right: 30, bottom: 30),
+                          child: textFieldAuth(
+                              validasi: 'mana nim mu?',
+                              hinText: 'masukkan mim',
+                              controller: newreg.textNim,
+                              judul: 'nim',
+                              tipe: TextInputType.number),
                         ),
                         //input NIM
                         Padding(
@@ -274,50 +228,15 @@ class _RegisterState extends State<Register> {
                           ),
                         ),
                         //dropdown prodi
-                        const Padding(
-                          padding: EdgeInsets.only(left: 30, top: 0),
-                          child: Text(
-                            'Email',
-                            style: TextStyle(
-                                fontFamily: 'PoppinsBold', fontSize: 15),
-                          ),
-                        ),
-                        // text email
                         Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 20, left: 30, right: 30),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'mana emailmu?';
-                                    }
-                                    return null;
-                                  },
-                                  controller: newreg.textEmail,
-                                  // onSubmitted: (_) => newoprec.daftar(),
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: InputDecoration(
-                                    filled: false,
-                                    //fillColor: Color.fromARGB(104, 31, 65, 187),
-                                    hintText: 'Masukkan Email',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      borderSide:
-                                          const BorderSide(color: Colors.black),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          const BorderSide(color: Colors.black),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          padding: EdgeInsets.only(
+                              left: 30, top: 0, right: 30, bottom: 20),
+                          child: textFieldAuth(
+                              validasi: 'mana emailmu?',
+                              hinText: 'masukkan email',
+                              controller: newreg.textEmail,
+                              judul: 'email',
+                              tipe: TextInputType.emailAddress),
                         ),
                         //input email
                         const Padding(
@@ -377,43 +296,7 @@ class _RegisterState extends State<Register> {
                                       right: 50, left: 50),
                                   child: SizedBox(
                                     height: 60,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        print(newreg.textEmail);
-                                        print(newreg.textName);
-                                        print(newreg.textNim);
-                                        print(newreg.textPass);
-                                        print(newreg.textProdi);
-
-                                        Registermodel dataBaru =
-                                            newreg.convertToModel();
-                                        regisApi(dataBaru);
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: ((context) =>
-                                        //         const formlogin()),
-                                        //   ),
-                                        // );
-                                        //Navigator.pop(context);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        shadowColor: const Color.fromARGB(
-                                            255, 13, 41, 183),
-                                        elevation: 10,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        backgroundColor: const Color.fromARGB(
-                                            255, 13, 41, 183),
-                                      ),
-                                      child: const Text(
-                                        'Create Account',
-                                        style: TextStyle(fontSize: 22),
-                                      ),
-                                    ),
+                                    child: button(text: 'Create Account', pressed: send)
                                   ),
                                   //tombol SSO Poliwangi
                                 ),
@@ -432,5 +315,10 @@ class _RegisterState extends State<Register> {
         ),
       ),
     );
+  }
+
+  send() {
+    Registermodel dataBaru = newreg.convertToModel();
+    regisApi(dataBaru);
   }
 }

@@ -129,7 +129,7 @@ class _PengembalianformState extends State<Pengembalianform> {
   List<String> kondisi = ['baik', 'kurang', 'rusak'];
   String selectKondisi = 'baik';
 
-  String selectalat = 'bola basket';
+  String selectalat = 'Bola Basket';
 
   @override
   Widget build(BuildContext context) {

@@ -13,6 +13,7 @@ import 'package:pblukm/pendaftaran/oprec.dart';
 import 'package:http/http.dart' as http;
 import 'package:pblukm/transaksi/pengembalian.dart';
 import 'package:pblukm/transaksi/stok.dart';
+import 'package:pblukm/widget/widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,7 +36,7 @@ class _HomeState extends State<Home> {
       userLogin = userLogin2;
       print(userLogin.statuspendaftar);
       print(userLogin.isAnggota);
-      print(userLogin.iduserLogin);
+      print(userLogin.namaLogin);
       print('halaman home');
       //runApp(MaterialApp(home: userLogin.emailLogin == null ? login() : Home(),));
       //print(recruitment);
@@ -47,7 +48,7 @@ class _HomeState extends State<Home> {
     super.initState();
     getSharedPrefs();
 
-    _getdataFormAPI();
+    getdataFormAPI();
   }
 
   // late User userLogin;
@@ -58,37 +59,6 @@ class _HomeState extends State<Home> {
   String subtitle = '';
   @override
   Widget build(BuildContext context) {
-    //setState(() {});
-    // if (formloginState.statuspendaftar.contains('terima')) {
-    //   recruitment = false;
-    //   popPinjam = 'terus aktif yaa!';
-    // } else if (userLogin.statuspendaftar == "menunggu") {
-    //   recruitment = false;
-    //   popPinjam = 'tunggu ACC dari kami ya!';
-    // } else if (formloginState.statuspendaftar.contains('tolak')) {
-    //   recruitment = false;
-    //   popPinjam = 'maaf nihh tapi kamu bukan anggota';
-    // } else if (formloginState.statuspendaftar.contains('kamu belum daftar')) {
-    //   recruitment = true;
-    //   popPinjam = 'ayo daftar jadi anggota kami...';
-    // }
-
-    // if (formloginState.isAnggota.contains('Anggota') &&
-    //     formloginState.statuspendaftar.contains('terima')) {
-    //   isPinjam = true;
-    // } else if (formloginState.isAnggota.contains('Anggota') &&
-    //     formloginState.statuspendaftar.contains('menunggu')) {
-    //   isPinjam = false;
-    //   popPinjam = 'tunggu ACC dari kami ya!';
-    // } else if (formloginState.isAnggota.contains('Anggota') &&
-    //     formloginState.statuspendaftar.contains('tolak')) {
-    //   isPinjam = false;
-    //   popPinjam = 'coba lagi tahun depan yaa..';
-    // } else {
-    //   isPinjam = false;
-    //   popPinjam = 'ayo daftar jadi anggota kami...';
-    // }
-
     if (userLogin.statuspendaftar!.contains('menunggu')) {
       recruitment = false;
       isPinjam = false;
@@ -106,14 +76,6 @@ class _HomeState extends State<Home> {
       isPinjam = false;
       subtitle = 'coba lagi tahun depan yaa..';
     }
-
-    // if (userLogin.isAnggota == 'kamu bukan anggota') {
-    //   subtitle = 'ayo daftar jadi anggota kami...';
-    //   isPinjam = false;
-    // }
-    // else if(userLogin.isAnggota == 'anggota'){
-    //   isPinjam = true;
-    // }
 
     return Scaffold(
       body: Padding(
@@ -215,63 +177,44 @@ class _HomeState extends State<Home> {
                         Expanded(
                           child: SizedBox(
                             height: 100,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (recruitment == false) {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(userLogin.statuspendaftar!),
-                                        content: Text(subtitle),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: const Text('OK'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                  //print(recruitment);
-                                } else {
-                                  final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const Oprec()));
-                                  if (result == "menunggu") {
-                                    setState(() {
-                                      userLogin.statuspendaftar = "menunggu";
-                                      userLogin.isAnggota = "anggota";
-                                    });
+                            child: buttonHome(
+                                iconsPicked: Iconsax.user_add4,
+                                iconColor: Colors.green,
+                                pressed: () async {
+                                  if (recruitment == false) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title:
+                                              Text(userLogin.statuspendaftar!),
+                                          content: Text(subtitle),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                    //print(recruitment);
+                                  } else {
+                                    final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const Oprec()));
+                                    if (result == "menunggu") {
+                                      setState(() {
+                                        userLogin.statuspendaftar = "menunggu";
+                                        userLogin.isAnggota = "anggota";
+                                      });
+                                    }
                                   }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: Colors.blue, width: 2),
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.deepPurple,
-                                  elevation: 10,
-                                  shadowColor: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10))),
-                              child: const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Iconsax.user_add4,
-                                    size: 50,
-                                    color: Colors.green,
-                                  ),
-                                  Text(
-                                    'Pendaftaran',
-                                    style: TextStyle(color: Colors.black),
-                                  )
-                                ],
-                              ),
-                            ),
+                                },
+                                textButton: 'Pendaftaran'),
                           ),
                         ),
                       ],
@@ -284,9 +227,9 @@ class _HomeState extends State<Home> {
                           Expanded(
                             child: SizedBox(
                               height: 100,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  isPinjam == false
+                              child: buttonHome(iconsPicked: Iconsax.wallet_add, iconColor: Color.fromARGB(255, 255, 231, 16), 
+                              pressed: ()async{
+                                isPinjam == false
                                       ? showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
@@ -305,32 +248,7 @@ class _HomeState extends State<Home> {
                                           },
                                         )
                                       : displaySheets(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    side: const BorderSide(
-                                        color: Colors.blue, width: 2),
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: Colors.deepPurple,
-                                    elevation: 10,
-                                    shadowColor: Colors.black,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10))),
-                                child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Iconsax.wallet_add,
-                                      size: 50,
-                                      color: Color.fromARGB(255, 255, 231, 16),
-                                    ),
-                                    Text(
-                                      'Alat',
-                                      style: TextStyle(color: Colors.black),
-                                    )
-                                  ],
-                                ),
-                              ),
+                              }, textButton: 'Alat')
                             ),
                           ),
                         ],
@@ -404,7 +322,7 @@ class _HomeState extends State<Home> {
     return apiList;
   }
 
-  Future<void> _getdataFormAPI() async {
+  Future<void> getdataFormAPI() async {
     var api = await connectToApi();
     if (mounted) {
       setState(() {

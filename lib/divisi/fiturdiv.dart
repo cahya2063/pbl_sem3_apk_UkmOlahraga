@@ -14,7 +14,7 @@ class Futsal extends StatefulWidget {
 class _FutsalState extends State<Futsal> {
   List<dynamic> dataAnggota = [];
 
-  @override
+  @override 
   void initState() {
     super.initState();
     fetchData();
