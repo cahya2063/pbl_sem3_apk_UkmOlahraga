@@ -112,7 +112,7 @@ class _PengembalianformState extends State<Pengembalianform> {
         }
       } catch (e) {
         print('Terjadi kesalahan saat decoding JSON: $e');
-        Navigator.popUntil(context, ModalRoute.withName('/history'));
+        Navigator.pop(context);
         dialogSucces();
       }
 
