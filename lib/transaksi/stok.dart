@@ -28,7 +28,7 @@ class _StokState extends State<Stok> {
       List<dynamic> responseBody = json.decode(response.body);
       List<dynamic> alatList = responseBody[0];
       List<Modelalat> alats =
-          alatList.map((item) => Modelalat.fromJson(item)).toList();
+          alatList.map((item) => Modelalat.fromJson(item)).toList();//untuk mengubah nilai yang ada pada  Modelalat.fromJson(item)).toList()
 
       return alats;
     } else {
@@ -308,8 +308,8 @@ class _StokState extends State<Stok> {
       if (query.isEmpty) {
         alat = List.from(originalAlat);
       } else {
-        alat = alat.where((model) {
-          return model.nama.toLowerCase().contains(query.toLowerCase());
+        alat = alat.where((alat) {
+          return alat.nama.toLowerCase().contains(query.toLowerCase());
         }).toList();
       }
     });

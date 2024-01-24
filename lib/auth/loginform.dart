@@ -29,16 +29,17 @@ class formloginState extends State<formlogin> {
 
   late User userLogin;
 // Bagian dari fungsi getStatusPendaftarByNIM
+  //function untuk mengambil data status di tabel anggota berdasarkan nim yang cocok
   Future<void> getStatusPendaftarByNIM(String nim) async {
     final response = await http
-        .get(Uri.parse('http://10.0.2.2:8000/api/pendaftaran/view/$nim'));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body); // Data adalah array luaran
+        .get(Uri.parse('http://10.0.2.2:8000/api/pendaftaran/view/$nim'));//kirim request ke API
+    if (response.statusCode == 200) {//jika respons OK maka : 
+      final data = json.decode(response.body); //lakukan decoding pada respons dan masukkan ke variabel data
       var pendaftarData = data[0]; // Mengakses array dalam di indeks 0
 
-      if (pendaftarData != null) {
-        userLogin.statuspendaftar = pendaftarData['status'];
-        userLogin.isAnggota = pendaftarData['jabatan'];
+      if (pendaftarData != null) {//jika pendaftar data tidak kosong maka : 
+        userLogin.statuspendaftar = pendaftarData['status'];//masukkan nilai pada pendaftarData['status'] ke userLogin.statuspendaftar
+        userLogin.isAnggota = pendaftarData['jabatan'];//masukkan nilai pada pendaftarData['jabatan'] ke userLogin.isAnggota
       }
 
       print('checkpoint');
@@ -48,7 +49,7 @@ class formloginState extends State<formlogin> {
   }
 
   Future<void> loginUser() async {
-    bool isValid = formKey.currentState!.validate();
+    bool isValid = formKey.currentState!.validate();//validator
     if (!isValid) {
       // Tampilkan pesan jika form tidak valid
       return;
@@ -66,16 +67,15 @@ class formloginState extends State<formlogin> {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
-      if (data['status'] == true && data['message'] == 'Login Berhasil') {
-        userLogin = User.fromjson(data);
+      if (data['status'] == true && data['message'] == 'Login Berhasil') {//jika Login berhasil maka : 
+        userLogin = User.fromjson(data);//masukkan variabel data ke userLogin
 
-        await getStatusPendaftarByNIM(userLogin.nimLogin);
+        await getStatusPendaftarByNIM(userLogin.nimLogin);//masukkan userLogin.nimLogin ke parameter 
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString("UserLoginInfo", json.encode(userLogin.tojson()));
+        prefs.setString("UserLoginInfo", json.encode(userLogin.tojson()));//atur nilai userLogin.toJson ke shared preferences menggunakan key "userLoginInfo"
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => navbar()));
-        // final SharedPreferences prefs = await SharedPreferences.getInstance();
-      } else {
+            context, MaterialPageRoute(builder: (context) => navbar()));//jika berhasil simpan arahakan ke navbar
+      } else {// jika login gagal maka : 
         // Jika login gagal, tampilkan pesan kesalahan
         // ignore: use_build_context_synchronously
         showDialog(

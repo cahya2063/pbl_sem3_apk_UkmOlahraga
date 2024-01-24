@@ -5,12 +5,13 @@ class User {
   String prodiLogin;
   String token;
   int iduserLogin;
-
+  //String gambar;
   String? statuspendaftar;
   String? isAnggota;
 
   User(
       {required this.iduserLogin,
+      //required this.gambar,
       required this.namaLogin,
       required this.emailLogin,
       required this.prodiLogin,
@@ -26,6 +27,7 @@ class User {
         nimLogin: data['data']['nim'] as String,
         emailLogin: data['data']['email'] as String,
         prodiLogin: data['data']['prodi'] as String,
+        //gambar: data['data']['gambar'] as String,
         iduserLogin: data['data']['id'] as int);
   }
 
@@ -37,7 +39,7 @@ class User {
     dataLogin['emailLogin'] = emailLogin;
     dataLogin['prodiLogin'] = prodiLogin;
     dataLogin['token'] = token;
-
+    //dataLogin['gambar'] = gambar;
     dataLogin['statuspendaftar'] = statuspendaftar;
     dataLogin['isAnggota'] = isAnggota;
 
@@ -46,6 +48,7 @@ class User {
 
   factory User.fromjson2(Map<String, dynamic> data) {
     return User(
+     // gambar: data['gambar'] as String,
         token: data['token'] as String,
         namaLogin: data['namaLogin'] as String,
         nimLogin: data['nimLogin'] as String,

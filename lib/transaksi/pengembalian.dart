@@ -80,6 +80,7 @@ class _PengembalianformState extends State<Pengembalianform> {
 
   Future<void> addPengembalian(ModelPengembalian pengembalian) async {
     if (file == null) {
+      // ignore: avoid_print
       print('Tidak ada gambar yang dipilih');
       return;
     }
@@ -101,7 +102,7 @@ class _PengembalianformState extends State<Pengembalianform> {
         Map<String, dynamic> data = json.decode(response.body);
         status = data['status'];
         message = data['message'];
-        Navigator.pop(context, ModalRoute.withName('/'));
+        Navigator.pop(context, ModalRoute.withName('/history'));
         if (message == 'data peminjaman tidak ditemukan') {
           dialogNotFound();
         } else if (message == 'jumlah barang yang dikembalikan tidak sesuai') {
@@ -111,7 +112,7 @@ class _PengembalianformState extends State<Pengembalianform> {
         }
       } catch (e) {
         print('Terjadi kesalahan saat decoding JSON: $e');
-        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.popUntil(context, ModalRoute.withName('/history'));
         dialogSucces();
       }
 
@@ -670,29 +671,29 @@ class _PengembalianformState extends State<Pengembalianform> {
   //untuk ambil gambar dari galeri
 
   Future<void> _selectDatePinjam() async {
-    DateTime? _picked = await showDatePicker(
+    DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(200),
         lastDate: DateTime(2100));
-    if (_picked != null) {
+    if (picked != null) {
       setState(() {
         newKembali.tggl_pinjamController.text =
-            _picked.toString().split(" ")[0];
+            picked.toString().split(" ")[0];
       });
     }
   }
 
   Future<void> _selectDatePengembalian() async {
-    DateTime? _picked = await showDatePicker(
+    DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime(200),
         lastDate: DateTime(2100));
-    if (_picked != null) {
+    if (picked != null) {
       setState(() {
         newKembali.tggl_kembaliController.text =
-            _picked.toString().split(" ")[0];
+            picked.toString().split(" ")[0];
       });
     }
   }

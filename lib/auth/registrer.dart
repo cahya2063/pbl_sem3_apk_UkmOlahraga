@@ -3,10 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:pblukm/auth/login.dart';
-//import 'package:pblukm/form/oprecform2.dart';
 import 'package:pblukm/models/Register.dart';
 import 'package:pblukm/form/registerform.dart';
 import 'package:http/http.dart' as http;
@@ -23,41 +20,24 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Future<List<Registermodel>> fetchData() async {
-    final response =
-        await http.get(Uri.parse('http://10.0.2.2:8000/api/user/view'));
-    if (response.statusCode == 200) {
-      // Map<String, dynamic> responseBody = json.decode(response.body);
-      // List<dynamic> divisiList = responseBody['data'];
 
-      List<dynamic> responseBody = json.decode(response.body);
-      List<dynamic> divisiList = responseBody.elementAt(0);
-
-      List<Registermodel> oprec =
-          divisiList.map((item) => Registermodel.fromjson(item)).toList();
-
-      return oprec;
-    } else {
-      throw "Failed to load data: ${response.statusCode}";
-    }
-  }
 
   Future<void> regisApi(Registermodel regist) async {
-    bool isValid = formKey.currentState!.validate();
+    bool isValid = formKey.currentState!.validate();//validator
     if (!isValid) {
       return;
     }
 
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8000/api/register'),
-      body: jsonEncode(regist.toJson()), //json data
       headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8'//untuk memberi tahu server bahwa request yang dikirim berupa json
       },
+      body: jsonEncode(regist.toJson()), //masukkan data yang ada pada regist.toJson ke bodiy dari API
     );
     if (response.statusCode == 200) {
-      var jsonresponse = jsonDecode(response.body);
-      var message = jsonresponse['message'];
+      var jsonresponse = jsonDecode(response.body);//ubah respons json dan masukkan ke jsonresponse
+      var message = jsonresponse['message'];//dan masukkan jsonresponse['message] ke message
       print('status pendaftar : $jsonresponse');
       if (jsonresponse['status'] == true) {
         Navigator.pop(context);
@@ -318,6 +298,11 @@ class _RegisterState extends State<Register> {
   }
 
   send() {
+    // print(newreg.textName.text);
+    // print(newreg.textNim.text);
+    // print(newreg.textProdi.text);
+    // print(newreg.textEmail.text);
+    // print(newreg.textPass.text);
     Registermodel dataBaru = newreg.convertToModel();
     regisApi(dataBaru);
   }

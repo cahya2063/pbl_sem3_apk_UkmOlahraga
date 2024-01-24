@@ -11,7 +11,6 @@ import 'package:pblukm/pendaftaran/oprec.dart';
 //import 'package:pblukm/pinjamform.dart';
 //import 'package:pblukm/stok.dart';
 import 'package:http/http.dart' as http;
-import 'package:pblukm/transaksi/pengembalian.dart';
 import 'package:pblukm/transaksi/stok.dart';
 import 'package:pblukm/widget/widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -90,6 +89,7 @@ class _HomeState extends State<Home> {
                 children: [
                   Image.asset(
                     'img/avatar.png',
+                    //base64Decode(userLogin.gambar),
                     width: 65,
                   ),
                   //gambar profil
@@ -226,30 +226,34 @@ class _HomeState extends State<Home> {
                         children: [
                           Expanded(
                             child: SizedBox(
-                              height: 100,
-                              child: buttonHome(iconsPicked: Iconsax.wallet_add, iconColor: Color.fromARGB(255, 255, 231, 16), 
-                              pressed: ()async{
-                                isPinjam == false
-                                      ? showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  userLogin.statuspendaftar!),
-                                              content: Text(subtitle),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context),
-                                                  child: const Text('OK'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        )
-                                      : displaySheets(context);
-                              }, textButton: 'Alat')
-                            ),
+                                height: 100,
+                                child: buttonHome(
+                                    iconsPicked: Iconsax.wallet_add,
+                                    iconColor:
+                                        const Color.fromARGB(255, 255, 231, 16),
+                                    pressed: () async {
+                                      isPinjam == false
+                                          ? showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Text(userLogin
+                                                      .statuspendaftar!),
+                                                  content: Text(subtitle),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
+                                                      child: const Text('OK'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            )
+                                          : displaySheets(context);
+                                    },
+                                    textButton: 'Alat')),
                           ),
                         ],
                       ),
@@ -354,63 +358,23 @@ Future displaySheets(BuildContext context) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 50, right: 50),
-                    child: SizedBox(
-                      height: 60,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const Stok()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 13, 41, 183),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15))),
-                          child: const Text(
-                            'peminjaman alat',
-                            style: TextStyle(fontSize: 20),
-                          )),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            blueButton(
+                height: 60,
+                fontSize: 23,
+                action: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Stok()));
+                },
+                textMid: 'peminjaman alat'),
             //tombol peminjaman alat
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 50, right: 50),
-                    child: SizedBox(
-                      height: 60,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const history()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 13, 41, 183),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15))),
-                          child: const Text(
-                            'pengembalian alat',
-                            style: TextStyle(fontSize: 20),
-                          )),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            blueButton(
+                height: 60,
+                fontSize: 23,
+                action: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const history()));
+                },
+                textMid: 'pengembalian alat')
             //tombol pengembalian
           ],
         ),

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:pblukm/profile/editprof.dart';
 import 'package:pblukm/auth/login.dart';
-import 'package:pblukm/auth/loginform.dart';
 import 'package:pblukm/models/usermodel.dart';
+import 'package:pblukm/profile/tentangkami.dart';
+import 'package:pblukm/widget/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
@@ -31,7 +32,6 @@ class _ProfileState extends State<Profile> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getSharedPrefs();
   }
@@ -68,10 +68,10 @@ class _ProfileState extends State<Profile> {
                         width: 100,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.only(bottom: 10),
                         child: Text(
-                          '${userLogin.namaLogin}',
-                          style: TextStyle(
+                          userLogin.namaLogin,
+                          style: const TextStyle(
                               fontFamily: 'PoppinsBold', fontSize: 30),
                         ),
                       ),
@@ -79,16 +79,15 @@ class _ProfileState extends State<Profile> {
                         width: 180,
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                          final result = await Navigator.push(
+                            final result = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: ((context) => EditProf())));
-                                    if (result != userLogin.emailLogin) {
-                                      setState(() {
-                                        userLogin.emailLogin = result;
-                                      });
-                                      
-                                    }
+                                    builder: ((context) => const EditProf())));
+                            if (result != userLogin.emailLogin) {
+                              setState(() {
+                                userLogin.emailLogin = result;
+                              });
+                            }
                           },
                           icon: const Icon(Iconsax.edit),
                           label: const Text('Edit Profil'),
@@ -133,7 +132,7 @@ class _ProfileState extends State<Profile> {
                                 ],
                                 borderRadius: BorderRadius.circular(20)),
                             child: Padding(
-                              padding: EdgeInsets.only(top: 15, left: 20),
+                              padding: const EdgeInsets.only(top: 15, left: 20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -151,8 +150,8 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${userLogin.nimLogin}',
-                                    style: TextStyle(fontSize: 15),
+                                    userLogin.nimLogin,
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                   const Text(
                                     'Gmail',
@@ -161,8 +160,8 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${userLogin.emailLogin}',
-                                    style: TextStyle(fontSize: 15),
+                                    userLogin.emailLogin,
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                   const Text(
                                     'Prodi',
@@ -171,8 +170,8 @@ class _ProfileState extends State<Profile> {
                                         fontSize: 15),
                                   ),
                                   Text(
-                                    '${userLogin.prodiLogin}',
-                                    style: TextStyle(fontSize: 15),
+                                    userLogin.prodiLogin,
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                 ],
                               ),
@@ -182,68 +181,33 @@ class _ProfileState extends State<Profile> {
                       ),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 40, right: 40, bottom: 10),
-                          child: SizedBox(
-                            height: 50,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 13, 41, 183),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10))),
-                              onPressed: () {},
-                              child: const Text(
-                                'Tentang Kami',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: blueButton(
+                      action: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => tentangKami()));
+                      },
+                      fontSize: 25,
+                      textMid: 'tentang kami',
+                      height: 50,
+                      left: 40,
+                      right: 40,
+                      radius: 10,
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 40, right: 40, bottom: 10),
-                          child: SizedBox(
-                            height: 50,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        const Color.fromARGB(255, 13, 41, 183),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10))),
-                                onPressed: () async{
-                                  SharedPreferences  prefs = await SharedPreferences.getInstance();
-                                  prefs.remove("UserLoginInfo");
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>login()));
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => const login()));
-                                },
-                                child: const Text(
-                                  'Log out',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                )),
-                          ),
-                        ),
-                      )
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: blueButton(
+                        fontSize: 25,
+                        left: 40,
+                        right: 40,
+                        radius: 10,
+                        height: 50,
+                        action: logout,
+                        textMid: 'Log out'),
                   ),
                   const SizedBox(
                     height: 20,
@@ -255,5 +219,12 @@ class _ProfileState extends State<Profile> {
         ],
       ),
     );
+  }
+
+  logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("UserLoginInfo");
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => login()));
   }
 }

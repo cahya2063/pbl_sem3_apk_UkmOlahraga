@@ -1,10 +1,10 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pblukm/form/oprecform2.dart';
 // import 'package:pblukm/home.dart';
@@ -97,7 +97,7 @@ class _OprecState extends State<Oprec> {
     // Mengonversi gambar menjadi base64
     String base64Image = base64Encode(file!.readAsBytesSync());
     person.cv = base64Image;
-
+//satu class khusus untuk backend
     // Mengirim data ke endpoint API untuk pengunggahan gambar
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8000/api/pendaftaran/create'),
@@ -116,7 +116,7 @@ class _OprecState extends State<Oprec> {
       showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
+            return const AlertDialog(
               title: Text('Berhasil daftar '),
               content: Text('terus pantau notifikasimu!!'),
             );

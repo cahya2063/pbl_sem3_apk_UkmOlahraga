@@ -5,8 +5,8 @@ import 'package:pblukm/divisi/fiturdiv.dart';
 //import 'package:pblukm/home.dart';
 //import 'package:pblukm/home.dart';
 import 'package:pblukm/auth/login.dart';
-import 'package:pblukm/models/usermodel.dart';
 import 'package:pblukm/home/navbar.dart';
+import 'package:pblukm/transaksi/history.dart';
 import 'package:pblukm/transaksi/stok.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +19,7 @@ Future<void> main() async{
      routes: {
        // '/home':(context) => Home(),
         '/stok':(context) => Stok(),
+        'history':(context) => history(),
         '/futsal': (context) => const Futsal(),
         '/basket': (context) => const Basket(),
         '/badminthon': (context) => const Badminthon(),

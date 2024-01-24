@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 //import 'package:pblukm/profile.dart';
 import 'package:pblukm/models/usermodel.dart';
+import 'package:pblukm/widget/widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProf extends StatefulWidget {
@@ -22,7 +23,7 @@ class _EditProfState extends State<EditProf> {
 
   File? file;
   String filename = '';
-
+  bool isCvUpload = false;
   final textEditEmail = TextEditingController();
   final textEditPass = TextEditingController();
 
@@ -52,12 +53,23 @@ class _EditProfState extends State<EditProf> {
       // Tampilkan pesan jika form tidak valid
       return;
     }
+if (file == null) {
+      print('Tidak ada gambar yang dipilih');
+      return;
+    }
+
+    // if (!isCvUpload) {
+    //   return;
+    // }
+        String base64Image = base64Encode(file!.readAsBytesSync());
+        String foto = base64Image;
     var url = Uri.parse(
         'http://10.0.2.2:8000/api/edit/profil/${userLogin.iduserLogin}');
 
     var response = await http.post(url, body: {
       'email': textEditEmail.text,
       'password': textEditPass.text,
+      'gambar': foto,
     });
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -161,135 +173,142 @@ class _EditProfState extends State<EditProf> {
                                       children: [
                                         Form(
                                           key: formKey,
-                                            child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                const Expanded(
-                                                    flex: 2,
-                                                    child: Text('Gmail')),
-                                                const Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ':',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20),
-                                                    )),
-                                                const SizedBox(width: 10),
-                                                Expanded(
-                                                  flex: 5,
-                                                  child: TextFormField(
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return 'masukkan emailmu';
-                                                      }
-                                                      return null;
-                                                    },
-                                                    controller: textEditEmail,
-                                                    keyboardType: TextInputType
-                                                        .emailAddress,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          userLogin.emailLogin,
-                                                      contentPadding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              vertical: 10,
-                                                              horizontal: 10),
-                                                      border:
-                                                          OutlineInputBorder(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              textFieldEditProf(
+                                                  judul: 'gmail',
+                                                  validasi: 'mana emailmu?',
+                                                  hintext: userLogin.emailLogin,
+                                                  controller: textEditEmail),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              textFieldEditProf(
+                                                  judul: 'password',
+                                                  validasi: 'mana passwordmu?',
+                                                  hintext:
+                                                      'masukkan password baru',
+                                                  controller: textEditPass),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const Expanded(
+                                                      flex: 2,
+                                                      child: Text('foto')),
+                                                  const Expanded(
+                                                      flex: 0,
+                                                      child: Text(
+                                                        ':',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 20),
+                                                      )),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Expanded(
+                                                    flex: 5,
+                                                    child: Container(
+                                                      height: 50,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(10.0),
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black),
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 0, 0, 0),
+                                                          width: 0.0,
+                                                        ),
                                                       ),
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10.0),
+                                                      child: Row(
+                                                        children: [
+                                                          //========
+
+                                                          filename != null
+                                                              ? Expanded(
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                    child: Text(
+                                                                      filename,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              10,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis),
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : const Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              5),
+                                                                  child: Text(
+                                                                    'gambar cv',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
+                                                                ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    right: 5),
+                                                            child:
+                                                                ElevatedButton(
+                                                              onPressed: () {
+                                                                fromGallery();
+                                                              },
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        155,
+                                                                        187,
+                                                                        252),
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                ),
+                                                              ),
+                                                              child: const Text(
+                                                                'choose file',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        20),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            Row(
-                                              children: [
-                                                const Expanded(
-                                                    flex: 2,
-                                                    child: Text('password')),
-                                                const Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      ':',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20),
-                                                    )),
-                                                const SizedBox(width: 10),
-                                                Expanded(
-                                                  flex: 5,
-                                                  child: TextFormField(
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return 'mana passwordmu?';
-                                                      }
-                                                      return null;
-                                                    },
-                                                    controller: textEditPass,
-                                                    keyboardType: TextInputType
-                                                        .emailAddress,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          'masukkan password baru',
-                                                      contentPadding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              vertical: 10,
-                                                              horizontal: 10),
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10.0),
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black),
-                                                      ),
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
-                                                        borderSide:
-                                                            const BorderSide(
-                                                                color: Colors
-                                                                    .black),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10.0),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        )),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
@@ -297,7 +316,6 @@ class _EditProfState extends State<EditProf> {
                                             ElevatedButton(
                                                 onPressed: () {
                                                   editprof();
-                                                  
                                                 },
                                                 style: ElevatedButton.styleFrom(
                                                     shape:
@@ -327,7 +345,7 @@ class _EditProfState extends State<EditProf> {
                                                             0xff7A7A7A)),
                                                 child: const Text('batal')),
                                           ],
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -364,4 +382,3 @@ class _EditProfState extends State<EditProf> {
     }
   }
 }
-//fitur div Taekwondo
